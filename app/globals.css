@@ -155,3 +155,8 @@ footer a { color: var(--ink); font-weight: 700; text-decoration: none; }
  .invoice-table-head,.invoice-line{grid-template-columns:minmax(0,1fr) 30px 62px 70px;gap:5px;padding-left:6px;padding-right:6px;font-size:10px}
  .invoice-summary{width:82%}
 }
+
+
+/* Hero word highlight */
+.highlight-word{display:inline-block;position:relative;z-index:0;color:#fff!important;padding:.02em .16em .08em;margin:0 .03em;white-space:nowrap}
+.highlight-word::before{content:"";position:absolute;z-index:-1;inset:.06em -.08em -.01em -.08em;background:var(--accent);border-radius:.05em;transform:rotate(-.7deg)}
