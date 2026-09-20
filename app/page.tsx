@@ -16,8 +16,16 @@ const currencies = [
 export default function Home() {
   const [business, setBusiness] = useState("Atelier Nova");
   const [address, setAddress] = useState("24 Rue des Fleurs\n75002 Paris");
+  const [client, setClient] = useState("Acme Studio");
+  const [clientAddress, setClientAddress] = useState("8 Avenue Victor Hugo\n75016 Paris");
+  const [clientEmail, setClientEmail] = useState("billing@acme.studio");
   const [invoiceNo, setInvoiceNo] = useState("INV-2026-001");
   const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10));
+  const [dueDate, setDueDate] = useState(() => {
+    const value = new Date();
+    value.setDate(value.getDate() + 30);
+    return value.toISOString().slice(0, 10);
+  });
   const [payment, setPayment] = useState("Bank transfer");
   const [currency, setCurrency] = useState("EUR");
   const [tax, setTax] = useState(20);
@@ -75,10 +83,10 @@ export default function Home() {
     const img = new Image();
     img.src = dataUrl;
     await new Promise((resolve) => { img.onload = resolve; });
-    const width = 80;
+    const width = 190;
     const height = (img.height / img.width) * width;
-    const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: [width, Math.max(height, 110)] });
-    pdf.addImage(dataUrl, "PNG", 0, 0, width, height);
+    const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+    pdf.addImage(dataUrl, "PNG", 10, 10, width, Math.min(height, 277));
     pdf.save(`invoice-${invoiceNo}.pdf`);
   }
 
@@ -88,7 +96,7 @@ export default function Home() {
   return (
     <main className="site-shell">
       <header className="topbar">
-        <a className="brand" href="#"><span className="brand-icon">R</span><span>Invoicely</span></a>
+        <a className="brand" href="#"><span className="brand-icon">I</span><span>Invoicely</span></a>
         <div className="top-actions">
           <span className="privacy-pill">Processed locally</span>
           <a className="nav-link" href="#maker">Invoice Maker</a>
@@ -98,11 +106,11 @@ export default function Home() {
       </header>
 
       <section className="hero">
-        <div className="eyebrow">FREE RECEIPT MAKER</div>
+        <div className="eyebrow">FREE INVOICE MAKER</div>
         <h1>Make polished invoices.<br /><span>In under a minute.</span></h1>
         <p>Create professional invoices directly in your browser, or generate them programmatically with the Invoicely API. No account, no watermark, no invoice data stored.</p>
         <div className="hero-actions">
-          <a className="hero-primary" href="#maker">Create a invoice</a>
+          <a className="hero-primary" href="#maker">Create an invoice</a>
           <a className="hero-secondary" href="/docs"><span className="code-mark">&lt;/&gt;</span> Integrate the API</a>
         </div>
         <div className="hero-badges"><span>Live preview</span><span>PDF / PNG / JPG</span><span>No signup</span></div>
@@ -116,15 +124,23 @@ export default function Home() {
             <label>Business name<input value={business} onChange={(e) => setBusiness(e.target.value)} /></label>
             <label>Invoice number<input value={invoiceNo} onChange={(e) => setInvoiceNo(e.target.value)} /></label>
             <label className="span-2">Address<textarea rows={3} value={address} onChange={(e) => setAddress(e.target.value)} /></label>
-            <label>Date<input type="date" value={date} onChange={(e) => setDate(e.target.value)} /></label>
-            <label>Payment method<select value={payment} onChange={(e) => setPayment(e.target.value)}><option>Card</option><option>Cash</option><option>Bank transfer</option><option>PayPal</option><option>Other</option></select></label>
+            <label>Issue date<input type="date" value={date} onChange={(e) => setDate(e.target.value)} /></label>
+            <label>Due date<input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} /></label>
+            <label>Payment method<select value={payment} onChange={(e) => setPayment(e.target.value)}><option>Bank transfer</option><option>Card</option><option>Cash</option><option>PayPal</option><option>Other</option></select></label>
             <label>Currency<select value={currency} onChange={(e) => setCurrency(e.target.value)}>{currencies.map(([code]) => <option key={code}>{code}</option>)}</select></label>
             <label>Logo<input className="file-input" type="file" accept="image/*" onChange={uploadLogo} /></label>
           </div>
 
           <div className="section-divider" />
+          <div className="section-heading"><div><span>02</span><h2>Bill to</h2></div></div>
+          <div className="form-grid">
+            <label>Client / company<input value={client} onChange={(e) => setClient(e.target.value)} /></label>
+            <label>Client email<input value={clientEmail} onChange={(e) => setClientEmail(e.target.value)} /></label>
+            <label className="span-2">Billing address<textarea rows={2} value={clientAddress} onChange={(e) => setClientAddress(e.target.value)} /></label>
+          </div>
+          <div className="section-divider" />
 
-          <div className="section-heading compact"><div><span>02</span><h2>Items</h2></div><button className="text-action" onClick={addItem}>+ Add item</button></div>
+          <div className="section-heading compact"><div><span>03</span><h2>Items & services</h2></div><button className="text-action" onClick={addItem}>+ Add item</button></div>
           <div className="items-editor">
             {items.map((item, index) => (
               <div className="item-row" key={item.id}>
@@ -151,25 +167,31 @@ export default function Home() {
           <div className="preview-header"><div><span className="live-dot" />Live preview</div><span>A4 invoice</span></div>
           <div className="invoice-stage">
             <div className="invoice" ref={invoiceRef}>
-              <div className="invoice-top">
-                {logo ? <img className="invoice-logo" src={logo} alt="Business logo" /> : <div className="invoice-logo-fallback">{business.slice(0, 1) || "R"}</div>}
-                <h3>{business || "Your business"}</h3>
-                <p>{address.split("\n").map((line, index) => <span key={`${line}-${index}`}>{line}<br /></span>)}</p>
+              <div className="invoice-head">
+                <div>
+                  {logo ? <img className="invoice-logo" src={logo} alt="Business logo" /> : <div className="invoice-logo-fallback">{business.slice(0, 1) || "I"}</div>}
+                  <h3>{business || "Your business"}</h3>
+                  <p>{address}</p>
+                </div>
+                <div className="invoice-title"><h2>INVOICE</h2><strong>#{invoiceNo}</strong></div>
               </div>
-              <div className="dashed" />
-              <div className="invoice-meta"><span>Invoice</span><strong>{invoiceNo}</strong><span>Date</span><strong>{date}</strong><span>Payment</span><strong>{payment}</strong></div>
-              <div className="dashed" />
-              <div className="invoice-items">
-                {items.map((item) => <div className="invoice-item" key={item.id}><div><strong>{item.description || "Item"}</strong><span>{item.quantity} × {formatMoney(item.price)}</span></div><strong>{formatMoney(item.quantity * item.price)}</strong></div>)}
+              <div className="invoice-parties">
+                <div><span>FROM</span><strong>{business}</strong><p>{address}</p></div>
+                <div><span>BILL TO</span><strong>{client}</strong><p>{clientAddress}<br />{clientEmail}</p></div>
+                <div><span>ISSUED</span><strong>{date}</strong><span>DUE</span><strong>{dueDate}</strong><span>PAYMENT</span><strong>{payment}</strong></div>
               </div>
-              <div className="dashed" />
-              <div className="invoice-totals">
+              <div className="invoice-table">
+                <div className="invoice-table-head"><span>Description</span><span>Qty</span><span>Rate</span><span>Amount</span></div>
+                {items.map((item) => <div className="invoice-line" key={item.id}><strong>{item.description || "Item"}</strong><span>{item.quantity}</span><span>{formatMoney(item.price)}</span><strong>{formatMoney(item.quantity * item.price)}</strong></div>)}
+              </div>
+              <div className="invoice-summary">
                 <div><span>Subtotal</span><strong>{formatMoney(subtotal)}</strong></div>
                 {discount > 0 && <div><span>Discount ({discount}%)</span><strong>-{formatMoney(discountAmount)}</strong></div>}
                 {tax > 0 && <div><span>Tax ({tax}%)</span><strong>{formatMoney(taxAmount)}</strong></div>}
-                <div className="grand-total"><span>Total</span><strong>{formatMoney(total)}</strong></div>
+                <div className="invoice-total"><span>Total due</span><strong>{formatMoney(total)}</strong></div>
               </div>
-              <div className="invoice-footer"><div className="barcode">|||| ||| |||| | ||||| || ||||</div><p>{note}</p><small>Generated with Invoicely</small></div>
+              <div className="invoice-note"><strong>Notes</strong><p>{note}</p></div>
+              <small className="invoice-made">Generated with Invoicely</small>
             </div>
           </div>
           <div className="export-row"><button className="primary-button" onClick={exportPdf}>Download PDF</button><button className="square-button" onClick={() => exportImage("png")}>PNG</button><button className="square-button" onClick={() => exportImage("jpg")}>JPG</button></div>
@@ -182,7 +204,7 @@ export default function Home() {
         <div><span>03</span><strong>No account needed</strong><p>Open the page, make your invoice, leave.</p></div>
       </section>
 
-      <footer><div className="brand"><span className="brand-icon small">R</span><span>Invoicely</span></div><p>Simple tools for small businesses.</p><a href="https://github.com/ennouaimi/invoice-generator">Open source on GitHub</a></footer>
+      <footer><div className="brand"><span className="brand-icon small">I</span><span>Invoicely</span></div><p>Simple tools for small businesses.</p><a href="https://github.com/ennouaimi/invoice-generator">Open source on GitHub</a></footer>
     </main>
   );
 }
