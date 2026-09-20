@@ -58,24 +58,6 @@ function CodeBlock({code,label}:{code:string;label:string}){
 }
 
 export default function Docs(){
- const [trying,setTrying]=useState(false);
- const [tryResult,setTryResult]=useState<string|null>(null);
-
- async function tryCurl(){
-   setTrying(true); setTryResult(null);
-   try{
-     const response=await fetch("/api/v1/invoices?format=json",{
-       method:"POST",
-       headers:{"Content-Type":"application/json"},
-       body:payload
-     });
-     const body=await response.text();
-     if(!response.ok) throw new Error(body || `HTTP ${response.status}`);
-     setTryResult(body);
-   }catch(error){
-     setTryResult(error instanceof Error ? error.message : "Request failed.");
-   }finally{setTrying(false);}
- }
 
  return <main className="docs-shell">
    <nav className="docs-nav"><a className="brand" href="/"><span className="brand-icon">I</span>Invoicr</a><a className="ghost-button" href="/">Invoice Maker</a></nav>
@@ -87,9 +69,8 @@ export default function Docs(){
        <section id="payload"><h2>Request body</h2><CodeBlock code={payload} label="JSON"/></section>
        <section id="formats"><h2>Response formats</h2><div className="format-cards"><div><b>PDF</b><code>?format=pdf</code><p>A4 printable invoice.</p></div><div><b>HTML</b><code>?format=html</code><p>Ready-to-display markup.</p></div><div><b>JSON</b><code>?format=json</code><p>Validated data + totals.</p></div></div></section>
        <section id="examples">
-         <div className="example-title"><div><h2>cURL</h2><p>Copy it to your terminal, or test the same request here.</p></div><button className="try-button" onClick={tryCurl} disabled={trying}>{trying?"Running…":"▶ Try request"}</button></div>
+         <h2>cURL</h2>
          <CodeBlock code={curl} label="cURL"/>
-         {tryResult && <div className="try-result"><div><span className="live-dot"/>Response</div><CodeBlock code={tryResult} label="JSON response"/></div>}
          <h2>JavaScript</h2><CodeBlock code={js} label="JavaScript"/>
          <h2>Python</h2><CodeBlock code={py} label="Python"/>
        </section>
