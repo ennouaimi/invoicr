@@ -15,9 +15,9 @@ const currencies = [
 
 export default function Home() {
   const [business, setBusiness] = useState("Northstar Studio");
-  const [address, setAddress] = useState("24 Rue des Fleurs\n75002 Paris");
+  const [address, setAddress] = useState("120 Market Street\\nSan Francisco, CA 94105");
   const [client, setClient] = useState("Brightside Labs");
-  const [clientAddress, setClientAddress] = useState("8 Avenue Victor Hugo\n75016 Paris");
+  const [clientAddress, setClientAddress] = useState("455 Mission Street\\nSan Francisco, CA 94105");
   const [clientEmail, setClientEmail] = useState("billing@brightside.example");
   const [invoiceNo, setInvoiceNo] = useState("INV-2026-001");
   const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10));
