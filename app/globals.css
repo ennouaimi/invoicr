@@ -173,3 +173,5 @@ footer a { color: var(--ink); font-weight: 700; text-decoration: none; }
 .try-result{margin:18px 0 30px}
 .try-result>div:first-child{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800;color:var(--accent-dark);margin-bottom:8px}
 @media(max-width:600px){.example-title{align-items:stretch;flex-direction:column}.try-button{align-self:flex-start}.code-toolbar{padding-left:14px}.code-block pre{font-size:11px}}
+
+.github-star{text-decoration:none}
