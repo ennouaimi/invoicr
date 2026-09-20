@@ -1,7 +1,7 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "Invoicran — Free Invoice Maker",
+  title: "Invoicr — Free Invoice Maker",
   description: "Create clean, branded invoices in your browser. No signup, no storage.",
 };
 
