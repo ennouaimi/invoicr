@@ -8,7 +8,7 @@
   --muted: #7c746a;
   --border: #ded4c7;
   --accent: #e96f43;
-  --accent-dark: #c9552f;
+  --accent-dark: #b94f2d;
   --accent-soft: #ffe0d2;
   --shadow: 0 18px 60px rgba(66, 48, 32, .09);
 }
@@ -82,10 +82,12 @@ textarea { resize: vertical; }
 .receipt-footer small { opacity: .65; }
 .barcode { letter-spacing: 2px; font-size: 16px; color: #25211d; white-space: nowrap; overflow: hidden; }
 .export-row { display: grid; grid-template-columns: 1fr auto auto; gap: 9px; margin-top: 14px; }
-.primary-button, .square-button { border: 1.5px solid var(--ink); min-height: 48px; border-radius: 13px; font-weight: 800; cursor: pointer; box-shadow: 3px 3px 0 var(--ink); }
-.primary-button { background: var(--accent); color: white; }
-.square-button { background: var(--surface); color: var(--ink); padding: 0 14px; }
-.primary-button:hover, .square-button:hover, .ghost-button:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--ink); }
+.primary-button, .square-button { min-height: 48px; border-radius: 13px; font-weight: 800; cursor: pointer; }
+.primary-button { background: var(--accent); color: white; border: 1.5px solid var(--accent-dark); box-shadow: 3px 3px 0 var(--accent-dark); }
+.square-button { background: var(--surface); color: var(--ink); padding: 0 14px; border: 1.5px solid var(--border); box-shadow: 3px 3px 0 #c9bdae; }
+.primary-button:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--accent-dark); }
+.square-button:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 #c9bdae; }
+.ghost-button:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--ink); }
 .value-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; padding: 28px 0 72px; }
 .value-strip > div { border-top: 1px solid var(--border); padding-top: 20px; }
 .value-strip span { color: var(--accent); font-weight: 800; font-size: 12px; }
