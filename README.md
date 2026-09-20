@@ -1,32 +1,37 @@
 # Receiptly
 
-A local-first, no-signup receipt generator built with Next.js.
+Receipt maker + stateless receipt API. Built with Next.js and designed to work without a database.
 
-## Features
-
+## Web receipt maker
 - Live receipt preview
-- Business details and logo upload
-- Itemized products/services
-- Tax and discount calculations
-- Multiple currencies
-- Payment methods
+- Logo, items, tax, discount and currencies
 - PDF / PNG / JPG export
-- Responsive layout
-- No database and no receipt storage
+- No signup or storage
 
-## Run locally
+## Receipt API
+
+```http
+POST /api/v1/receipts?format=pdf
+Content-Type: application/json
+```
+
+Send merchant, items, tax and payment data. The endpoint returns a generated receipt.
+
+Formats:
+- `pdf` — raw PDF download
+- `html` — rendered receipt HTML
+- `json` — normalized receipt and calculated totals
+
+Interactive documentation is available at `/docs`.
+
+## Local development
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open http://localhost:3000.
-
-## Privacy
-
-Receipt data is processed in the browser and is not stored by the app.
+No database or environment variables are required for the MVP.
 
 ## License
-
 MIT

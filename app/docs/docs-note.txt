@@ -1,0 +1,1 @@
+The API is stateless: no receipt payload is persisted by the application.
