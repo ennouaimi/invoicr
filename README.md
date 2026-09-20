@@ -7,11 +7,11 @@
 A fast, privacy-friendly invoice maker and stateless invoice API.  
 Create professional invoices in your browser or generate them programmatically — no account, no watermark, no invoice data stored.
 
-[**Open Invoicr →**](https://receipt-generator-topaz-three.vercel.app/) · [**API Docs →**](https://receipt-generator-topaz-three.vercel.app/docs)
+[**Open Invoicr →**](https://try-invoicr.vercel.app/) · [**API Docs →**](https://try-invoicr.vercel.app/docs)
 
 <br />
 
-<img src="https://image.thum.io/get/width/1400/https://receipt-generator-topaz-three.vercel.app/" alt="Invoicr — free invoice maker" width="100%" />
+<img src="https://image.thum.io/get/width/1400/https://try-invoicr.vercel.app/" alt="Invoicr — free invoice maker" width="100%" />
 
 </div>
 
@@ -50,7 +50,7 @@ Content-Type: application/json
 ### Quick start
 
 ```bash
-curl -X POST "https://receipt-generator-topaz-three.vercel.app/api/v1/invoices?format=pdf" \
+curl -X POST "https://try-invoicr.vercel.app/api/v1/invoices?format=pdf" \
   -H "Content-Type: application/json" \
   -d '{
     "merchant": {
@@ -82,7 +82,7 @@ curl -X POST "https://receipt-generator-topaz-three.vercel.app/api/v1/invoices?f
 | **HTML** | `?format=html` | Render in a browser or application |
 | **JSON** | `?format=json` | Validated invoice data + calculated totals |
 
-Full examples for cURL, JavaScript and Python are available in the [API documentation](https://receipt-generator-topaz-three.vercel.app/docs).
+Full examples for cURL, JavaScript and Python are available in the [API documentation](https://try-invoicr.vercel.app/docs).
 
 ## ✦ Tech Stack
 
@@ -107,7 +107,7 @@ Invoicr focuses on three things: **speed, privacy and simplicity**. The invoice 
 
 <div align="center">
 
-**[Create an invoice](https://receipt-generator-topaz-three.vercel.app/)** · **[Read the API docs](https://receipt-generator-topaz-three.vercel.app/docs)**
+**[Create an invoice](https://try-invoicr.vercel.app/)** · **[Read the API docs](https://try-invoicr.vercel.app/docs)**
 
 Built for people who just want to make an invoice and move on.
 
