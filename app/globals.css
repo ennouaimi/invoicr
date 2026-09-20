@@ -117,3 +117,41 @@ footer a { color: var(--ink); font-weight: 700; text-decoration: none; }
 
 .nav-link{color:var(--muted);text-decoration:none;font-weight:700;font-size:14px;padding:9px 4px;transition:.18s ease}.nav-link:hover,.api-nav-link{color:var(--accent-dark)}.hero-actions{display:flex;justify-content:center;align-items:center;gap:11px;margin-top:28px}.hero-primary,.hero-secondary{min-height:48px;display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:13px;padding:0 20px;font-weight:800;text-decoration:none;transition:.18s ease}.hero-primary{background:var(--accent);color:white;border:1.5px solid var(--accent-dark);box-shadow:3px 3px 0 var(--accent-dark)}.hero-primary:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--accent-dark)}.hero-secondary{background:var(--surface);color:var(--ink);border:1.5px solid var(--border);box-shadow:3px 3px 0 #c9bdae}.hero-secondary:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 #c9bdae}.code-mark{color:var(--accent-dark);font-family:monospace;font-size:13px}.workspace{scroll-margin-top:24px}
 @media(max-width:680px){.nav-link{display:none}.hero-actions{flex-direction:column;align-items:stretch}.hero-primary,.hero-secondary{width:100%}}
+
+/* Invoice preview — keep these after legacy receipt rules so the invoice layout wins. */
+.invoice-stage{display:grid;place-items:center;padding:28px 18px;border-radius:20px;background:#e5d9c8;min-height:680px;overflow:auto}
+.invoice{width:min(100%,560px);min-height:720px;background:#fffdf8;padding:42px;color:var(--ink);box-shadow:0 18px 42px rgba(40,30,20,.12);font-family:"Gabarito",system-ui,sans-serif;font-size:12px}
+.invoice-head{display:flex;justify-content:space-between;align-items:flex-start;gap:32px}
+.invoice-head>div:first-child{max-width:58%}
+.invoice-head h3{font-size:20px;margin:12px 0 6px}
+.invoice-head p,.invoice-parties p{white-space:pre-line;color:var(--muted);line-height:1.5;margin:0}
+.invoice-logo,.invoice-logo-fallback{width:52px;height:52px;border-radius:13px;object-fit:contain}
+.invoice-logo-fallback{display:grid;place-items:center;background:var(--accent);color:#fff;font-weight:800;font-size:24px}
+.invoice-title{text-align:right}
+.invoice-title h2{font-size:30px;letter-spacing:.06em;color:var(--accent);margin:0 0 8px}
+.invoice-title strong{font-size:13px}
+.invoice-parties{display:grid;grid-template-columns:1fr 1fr .9fr;gap:24px;margin:42px 0 34px}
+.invoice-parties>div{display:grid;align-content:start;gap:6px;min-width:0}
+.invoice-parties span{display:block;font-size:9px;letter-spacing:.1em;color:var(--accent-dark);font-weight:800}
+.invoice-parties strong{display:block;font-size:12px}
+.invoice-table{width:100%}
+.invoice-table-head,.invoice-line{display:grid;grid-template-columns:minmax(0,1fr) 46px 82px 92px;gap:10px;align-items:center}
+.invoice-table-head{padding:11px 12px;border-radius:9px;background:var(--surface-2);font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:800}
+.invoice-line{padding:15px 12px;border-bottom:1px solid var(--border)}
+.invoice-table-head span:not(:first-child),.invoice-line span,.invoice-line>strong:last-child{text-align:right}
+.invoice-summary{width:min(300px,72%);margin:30px 0 34px auto;display:grid;gap:10px}
+.invoice-summary>div{display:flex;justify-content:space-between;gap:24px}
+.invoice-total{font-size:18px;border-top:2px solid var(--accent-dark);padding-top:12px;margin-top:4px}
+.invoice-note{border-top:1px solid var(--border);padding-top:20px}
+.invoice-note p{color:var(--muted);margin:7px 0}
+.invoice-made{display:block;text-align:center;color:var(--muted);margin-top:50px}
+@media(max-width:680px){
+ .invoice-stage{padding:16px 8px;min-height:620px}
+ .invoice{padding:24px 18px;min-height:620px}
+ .invoice-head{gap:14px}
+ .invoice-title h2{font-size:23px}
+ .invoice-parties{grid-template-columns:1fr 1fr;gap:18px;margin:30px 0}
+ .invoice-parties>div:last-child{grid-column:1/-1;grid-template-columns:auto 1fr auto 1fr auto 1fr;align-items:center}
+ .invoice-table-head,.invoice-line{grid-template-columns:minmax(0,1fr) 30px 62px 70px;gap:5px;padding-left:6px;padding-right:6px;font-size:10px}
+ .invoice-summary{width:82%}
+}
