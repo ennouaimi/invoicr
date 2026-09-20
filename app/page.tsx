@@ -98,10 +98,9 @@ export default function Home() {
       <header className="topbar">
         <a className="brand" href="#"><span className="brand-icon">I</span><span>Invoicr</span></a>
         <div className="top-actions">
-          <span className="privacy-pill">Processed locally</span>
           <a className="nav-link" href="#maker">Invoice Maker</a>
           <a className="nav-link api-nav-link" href="/docs">API Docs</a>
-          <a className="ghost-button" href="https://github.com/ennouaimi/invoice-generator" target="_blank">GitHub</a>
+          <a className="privacy-pill" href="https://github.com/ennouaimi/invoicr" target="_blank">GitHub</a>
         </div>
       </header>
 
