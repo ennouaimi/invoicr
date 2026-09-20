@@ -1,4 +1,4 @@
-# Invoicran
+# Invoicr
 
 Invoice maker + stateless invoice API. Built with Next.js and designed to work without a database.
 
