@@ -14,11 +14,11 @@ const currencies = [
 ];
 
 export default function Home() {
-  const [business, setBusiness] = useState("Atelier Nova");
+  const [business, setBusiness] = useState("Northstar Studio");
   const [address, setAddress] = useState("24 Rue des Fleurs\n75002 Paris");
-  const [client, setClient] = useState("Acme Studio");
+  const [client, setClient] = useState("Brightside Labs");
   const [clientAddress, setClientAddress] = useState("8 Avenue Victor Hugo\n75016 Paris");
-  const [clientEmail, setClientEmail] = useState("billing@acme.studio");
+  const [clientEmail, setClientEmail] = useState("billing@brightside.example");
   const [invoiceNo, setInvoiceNo] = useState("INV-2026-001");
   const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10));
   const [dueDate, setDueDate] = useState(() => {
@@ -96,7 +96,7 @@ export default function Home() {
   return (
     <main className="site-shell">
       <header className="topbar">
-        <a className="brand" href="#"><span className="brand-icon">I</span><span>Invoicely</span></a>
+        <a className="brand" href="#"><span className="brand-icon">I</span><span>Invoicran</span></a>
         <div className="top-actions">
           <span className="privacy-pill">Processed locally</span>
           <a className="nav-link" href="#maker">Invoice Maker</a>
@@ -108,7 +108,7 @@ export default function Home() {
       <section className="hero">
         <div className="eyebrow">FREE INVOICE MAKER</div>
         <h1>Make polished invoices.<br /><span>In under a minute.</span></h1>
-        <p>Create professional invoices directly in your browser, or generate them programmatically with the Invoicely API. No account, no watermark, no invoice data stored.</p>
+        <p>Create professional invoices directly in your browser, or generate them programmatically with the Invoicran API. No account, no watermark, no invoice data stored.</p>
         <div className="hero-actions">
           <a className="hero-primary" href="#maker">Create an invoice</a>
           <a className="hero-secondary" href="/docs"><span className="code-mark">&lt;/&gt;</span> Integrate the API</a>
@@ -191,7 +191,7 @@ export default function Home() {
                 <div className="invoice-total"><span>Total due</span><strong>{formatMoney(total)}</strong></div>
               </div>
               <div className="invoice-note"><strong>Notes</strong><p>{note}</p></div>
-              <small className="invoice-made">Generated with Invoicely</small>
+              <small className="invoice-made">Generated with Invoicran</small>
             </div>
           </div>
           <div className="export-row"><button className="primary-button" onClick={exportPdf}>Download PDF</button><button className="square-button" onClick={() => exportImage("png")}>PNG</button><button className="square-button" onClick={() => exportImage("jpg")}>JPG</button></div>
@@ -204,7 +204,7 @@ export default function Home() {
         <div><span>03</span><strong>No account needed</strong><p>Open the page, make your invoice, leave.</p></div>
       </section>
 
-      <footer><div className="brand"><span className="brand-icon small">I</span><span>Invoicely</span></div><p>Simple tools for small businesses.</p><a href="https://github.com/ennouaimi/invoice-generator">Open source on GitHub</a></footer>
+      <footer><div className="brand"><span className="brand-icon small">I</span><span>Invoicran</span></div><p>Simple tools for small businesses.</p><a href="https://github.com/ennouaimi/invoice-generator">Open source on GitHub</a></footer>
     </main>
   );
 }
