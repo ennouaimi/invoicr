@@ -11,7 +11,7 @@ Create professional invoices in your browser or generate them programmatically �
 
 <br />
 
-<img src="./assets/invoicr-preview.webp" alt="Invoicr — free invoice maker" width="100%" />
+<img src="./assets/invoicr.png" alt="Invoicr — free invoice maker" width="100%" />
 
 </div>
 
@@ -21,16 +21,16 @@ Create professional invoices in your browser or generate them programmatically �
 
 **Invoicr** is designed to keep invoice generation simple. Use the visual editor when you need an invoice now, or call the API when your product needs to generate one automatically.
 
-| | |
-| --- | --- |
-| ⚡ **Instant** | Live preview while you edit |
-| 🔒 **Private by design** | Invoice data isn't stored |
-| 🧾 **Professional** | Clean A4 invoice layout |
-| 📦 **Multiple exports** | PDF, PNG and JPG |
-| 🌍 **Flexible** | EUR, USD, GBP and MAD |
-| 🔌 **API-ready** | Generate invoices programmatically |
-| 🚫 **No signup** | Open it and start creating |
-| 💧 **No watermark** | Your invoice stays yours |
+|                          |                                    |
+| ------------------------ | ---------------------------------- |
+| ⚡ **Instant**           | Live preview while you edit        |
+| 🔒 **Private by design** | Invoice data isn't stored          |
+| 🧾 **Professional**      | Clean A4 invoice layout            |
+| 📦 **Multiple exports**  | PDF, PNG and JPG                   |
+| 🌍 **Flexible**          | EUR, USD, GBP and MAD              |
+| 🔌 **API-ready**         | Generate invoices programmatically |
+| 🚫 **No signup**         | Open it and start creating         |
+| 💧 **No watermark**      | Your invoice stays yours           |
 
 ## ✦ Invoice Maker
 
@@ -76,10 +76,10 @@ curl -X POST "https://try-invoicr.vercel.app/api/v1/invoices?format=pdf" \
 
 ### Response formats
 
-| Format | Query | Use case |
-| --- | --- | --- |
-| **PDF** | `?format=pdf` | Downloadable A4 invoice |
-| **HTML** | `?format=html` | Render in a browser or application |
+| Format   | Query          | Use case                                   |
+| -------- | -------------- | ------------------------------------------ |
+| **PDF**  | `?format=pdf`  | Downloadable A4 invoice                    |
+| **HTML** | `?format=html` | Render in a browser or application         |
 | **JSON** | `?format=json` | Validated invoice data + calculated totals |
 
 Full examples for cURL, JavaScript and Python are available in the [API documentation](https://try-invoicr.vercel.app/docs).
