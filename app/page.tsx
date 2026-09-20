@@ -100,7 +100,7 @@ export default function Home() {
         <div className="top-actions">
           <a className="nav-link" href="#maker">Invoice Maker</a>
           <a className="nav-link api-nav-link" href="/docs">API Docs</a>
-          <a className="privacy-pill" href="https://github.com/ennouaimi/invoicr" target="_blank">GitHub</a>
+          <a className="privacy-pill github-star" href="https://github.com/ennouaimi/invoicr" target="_blank" rel="noreferrer" aria-label="Star Invoicr on GitHub">⭐ Star on GitHub</a>
         </div>
       </header>
 
@@ -203,7 +203,7 @@ export default function Home() {
         <div><span>03</span><strong>No account needed</strong><p>Open the page, make your invoice, leave.</p></div>
       </section>
 
-      <footer><div className="brand"><span className="brand-icon small">I</span><span>Invoicr</span></div><p>Simple tools for small businesses.</p><a href="https://github.com/ennouaimi/invoice-generator">Open source on GitHub</a></footer>
+      <footer><div className="brand"><span className="brand-icon small">I</span><span>Invoicr</span></div><p>Simple tools for small businesses.</p><a href="https://github.com/ennouaimi/invoicr" target="_blank" rel="noreferrer">⭐ Star Invoicr on GitHub</a></footer>
     </main>
   );
 }
