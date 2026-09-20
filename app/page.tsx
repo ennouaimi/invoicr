@@ -91,6 +91,8 @@ export default function Home() {
         <a className="brand" href="#"><span className="brand-icon">R</span><span>Receiptly</span></a>
         <div className="top-actions">
           <span className="privacy-pill">Processed locally</span>
+          <a className="nav-link" href="#maker">Receipt Maker</a>
+          <a className="nav-link api-nav-link" href="/docs">API Docs</a>
           <a className="ghost-button" href="https://github.com/ennouaimi/receipt-generator" target="_blank">GitHub</a>
         </div>
       </header>
@@ -98,11 +100,15 @@ export default function Home() {
       <section className="hero">
         <div className="eyebrow">FREE RECEIPT MAKER</div>
         <h1>Make polished receipts.<br /><span>In under a minute.</span></h1>
-        <p>Create professional receipts directly in your browser. No account, no watermark, no data stored.</p>
+        <p>Create professional receipts directly in your browser, or generate them programmatically with the Receiptly API. No account, no watermark, no receipt data stored.</p>
+        <div className="hero-actions">
+          <a className="hero-primary" href="#maker">Create a receipt</a>
+          <a className="hero-secondary" href="/docs"><span className="code-mark">&lt;/&gt;</span> Integrate the API</a>
+        </div>
         <div className="hero-badges"><span>Live preview</span><span>PDF / PNG / JPG</span><span>No signup</span></div>
       </section>
 
-      <section className="workspace">
+      <section className="workspace" id="maker">
         <div className="editor-card">
           <div className="section-heading"><div><span>01</span><h2>Receipt details</h2></div><p>Everything updates instantly.</p></div>
 
