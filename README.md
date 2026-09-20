@@ -7,7 +7,7 @@
 A fast, privacy-friendly invoice maker and stateless invoice API.  
 Create professional invoices in your browser or generate them programmatically — no account, no watermark, no invoice data stored.
 
-[**Open Invoicr →**](https://try-invoicr.vercel.app/) · [**API Docs →**](https://try-invoicr.vercel.app/docs)
+[**Open Invoicr →**](https://try-invoicr.vercel.app/) · [**API Docs →**](https://try-invoicr.vercel.app/docs) · [**⭐ Star on GitHub**](https://github.com/ennouaimi/invoicr)
 
 <br />
 
@@ -109,7 +109,7 @@ Invoicr focuses on three things: **speed, privacy and simplicity**. The invoice 
 
 **[Create an invoice](https://try-invoicr.vercel.app/)** · **[Read the API docs](https://try-invoicr.vercel.app/docs)**
 
-Built for people who just want to make an invoice and move on.
+Built for people who just want to make an invoice and move on.\n\n**Like Invoicr? [Give the project a ⭐](https://github.com/ennouaimi/invoicr) to support it and help others discover it.**
 
 </div>
 
