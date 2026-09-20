@@ -107,7 +107,7 @@ export default function Home() {
 
       <section className="hero">
         <div className="eyebrow">FREE INVOICE MAKER</div>
-        <h1>Make polished <span className="highlight-word">invoices</span>.<br /><span>In under a minute.</span></h1>
+        <h1>Make polished invoices.<br /><span>In under a minute.</span></h1>
         <p>Create professional invoices directly in your browser, or generate them programmatically with the Invoicr API. No account, no watermark, no invoice data stored.</p>
         <div className="hero-actions">
           <a className="hero-primary" href="#maker">Create an invoice</a>
