@@ -60,6 +60,7 @@ curl -X POST "https://try-invoicr.vercel.app/api/v1/invoices?format=pdf" \
     "invoiceNumber": "INV-1001",
     "date": "2026-09-20",
     "currency": "USD",
+    "language": "fr",
     "items": [
       {
         "name": "Design services",
@@ -83,6 +84,10 @@ curl -X POST "https://try-invoicr.vercel.app/api/v1/invoices?format=pdf" \
 | **JSON** | `?format=json` | Validated invoice data + calculated totals |
 
 Full examples for cURL, JavaScript and Python are available in the [API documentation](https://try-invoicr.vercel.app/docs).
+
+### Invoice language
+
+Set `language` to `en` (default) or `fr` to translate the generated invoice labels. Unsupported language codes fall back to English. This changes labels in the invoice preview, image/PDF downloads, and API-generated HTML/PDF without changing business, customer, item, or note text.
 
 ## ✦ Tech Stack
 
