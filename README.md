@@ -1,26 +1,26 @@
-# Receiptly
+# Invoicely
 
-Receipt maker + stateless receipt API. Built with Next.js and designed to work without a database.
+Invoice maker + stateless invoice API. Built with Next.js and designed to work without a database.
 
-## Web receipt maker
-- Live receipt preview
+## Web invoice maker
+- Live invoice preview
 - Logo, items, tax, discount and currencies
 - PDF / PNG / JPG export
 - No signup or storage
 
-## Receipt API
+## Invoice API
 
 ```http
-POST /api/v1/receipts?format=pdf
+POST /api/v1/invoices?format=pdf
 Content-Type: application/json
 ```
 
-Send merchant, items, tax and payment data. The endpoint returns a generated receipt.
+Send merchant, items, tax and payment data. The endpoint returns a generated invoice.
 
 Formats:
 - `pdf` — raw PDF download
-- `html` — rendered receipt HTML
-- `json` — normalized receipt and calculated totals
+- `html` — rendered invoice HTML
+- `json` — normalized invoice and calculated totals
 
 Interactive documentation is available at `/docs`.
 
