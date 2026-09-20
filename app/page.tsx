@@ -16,19 +16,19 @@ const currencies = [
 export default function Home() {
   const [business, setBusiness] = useState("Atelier Nova");
   const [address, setAddress] = useState("24 Rue des Fleurs\n75002 Paris");
-  const [receiptNo, setReceiptNo] = useState("RCP-2026-001");
+  const [invoiceNo, setInvoiceNo] = useState("INV-2026-001");
   const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10));
-  const [payment, setPayment] = useState("Card");
+  const [payment, setPayment] = useState("Bank transfer");
   const [currency, setCurrency] = useState("EUR");
   const [tax, setTax] = useState(20);
   const [discount, setDiscount] = useState(0);
-  const [note, setNote] = useState("Thank you for your purchase!");
+  const [note, setNote] = useState("Thank you for your business.");
   const [logo, setLogo] = useState<string | null>(null);
   const [items, setItems] = useState<Item[]>([
     { id: 1, description: "Brand design package", quantity: 1, price: 120 },
     { id: 2, description: "Business cards", quantity: 2, price: 25 },
   ]);
-  const receiptRef = useRef<HTMLDivElement>(null);
+  const invoiceRef = useRef<HTMLDivElement>(null);
 
   const symbol = currencies.find(([code]) => code === currency)?.[1] ?? currency;
   const subtotal = useMemo(() => items.reduce((sum, item) => sum + item.quantity * item.price, 0), [items]);
@@ -58,20 +58,20 @@ export default function Home() {
   }
 
   async function exportImage(type: "png" | "jpg") {
-    if (!receiptRef.current) return;
+    if (!invoiceRef.current) return;
     const options = { pixelRatio: 3, backgroundColor: "#fffaf3", cacheBust: true };
     const dataUrl = type === "png"
-      ? await toPng(receiptRef.current, options)
-      : await toJpeg(receiptRef.current, { ...options, quality: 0.96 });
+      ? await toPng(invoiceRef.current, options)
+      : await toJpeg(invoiceRef.current, { ...options, quality: 0.96 });
     const link = document.createElement("a");
-    link.download = `receipt-${receiptNo}.${type === "jpg" ? "jpg" : "png"}`;
+    link.download = `invoice-${invoiceNo}.${type === "jpg" ? "jpg" : "png"}`;
     link.href = dataUrl;
     link.click();
   }
 
   async function exportPdf() {
-    if (!receiptRef.current) return;
-    const dataUrl = await toPng(receiptRef.current, { pixelRatio: 3, backgroundColor: "#fffaf3", cacheBust: true });
+    if (!invoiceRef.current) return;
+    const dataUrl = await toPng(invoiceRef.current, { pixelRatio: 3, backgroundColor: "#fffaf3", cacheBust: true });
     const img = new Image();
     img.src = dataUrl;
     await new Promise((resolve) => { img.onload = resolve; });
@@ -79,7 +79,7 @@ export default function Home() {
     const height = (img.height / img.width) * width;
     const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: [width, Math.max(height, 110)] });
     pdf.addImage(dataUrl, "PNG", 0, 0, width, height);
-    pdf.save(`receipt-${receiptNo}.pdf`);
+    pdf.save(`invoice-${invoiceNo}.pdf`);
   }
 
   const formatMoney = (value: number) =>
@@ -88,21 +88,21 @@ export default function Home() {
   return (
     <main className="site-shell">
       <header className="topbar">
-        <a className="brand" href="#"><span className="brand-icon">R</span><span>Receiptly</span></a>
+        <a className="brand" href="#"><span className="brand-icon">R</span><span>Invoicely</span></a>
         <div className="top-actions">
           <span className="privacy-pill">Processed locally</span>
-          <a className="nav-link" href="#maker">Receipt Maker</a>
+          <a className="nav-link" href="#maker">Invoice Maker</a>
           <a className="nav-link api-nav-link" href="/docs">API Docs</a>
-          <a className="ghost-button" href="https://github.com/ennouaimi/receipt-generator" target="_blank">GitHub</a>
+          <a className="ghost-button" href="https://github.com/ennouaimi/invoice-generator" target="_blank">GitHub</a>
         </div>
       </header>
 
       <section className="hero">
         <div className="eyebrow">FREE RECEIPT MAKER</div>
-        <h1>Make polished receipts.<br /><span>In under a minute.</span></h1>
-        <p>Create professional receipts directly in your browser, or generate them programmatically with the Receiptly API. No account, no watermark, no receipt data stored.</p>
+        <h1>Make polished invoices.<br /><span>In under a minute.</span></h1>
+        <p>Create professional invoices directly in your browser, or generate them programmatically with the Invoicely API. No account, no watermark, no invoice data stored.</p>
         <div className="hero-actions">
-          <a className="hero-primary" href="#maker">Create a receipt</a>
+          <a className="hero-primary" href="#maker">Create a invoice</a>
           <a className="hero-secondary" href="/docs"><span className="code-mark">&lt;/&gt;</span> Integrate the API</a>
         </div>
         <div className="hero-badges"><span>Live preview</span><span>PDF / PNG / JPG</span><span>No signup</span></div>
@@ -110,11 +110,11 @@ export default function Home() {
 
       <section className="workspace" id="maker">
         <div className="editor-card">
-          <div className="section-heading"><div><span>01</span><h2>Receipt details</h2></div><p>Everything updates instantly.</p></div>
+          <div className="section-heading"><div><span>01</span><h2>Invoice details</h2></div><p>Everything updates instantly.</p></div>
 
           <div className="form-grid">
             <label>Business name<input value={business} onChange={(e) => setBusiness(e.target.value)} /></label>
-            <label>Receipt number<input value={receiptNo} onChange={(e) => setReceiptNo(e.target.value)} /></label>
+            <label>Invoice number<input value={invoiceNo} onChange={(e) => setInvoiceNo(e.target.value)} /></label>
             <label className="span-2">Address<textarea rows={3} value={address} onChange={(e) => setAddress(e.target.value)} /></label>
             <label>Date<input type="date" value={date} onChange={(e) => setDate(e.target.value)} /></label>
             <label>Payment method<select value={payment} onChange={(e) => setPayment(e.target.value)}><option>Card</option><option>Cash</option><option>Bank transfer</option><option>PayPal</option><option>Other</option></select></label>
@@ -148,28 +148,28 @@ export default function Home() {
         </div>
 
         <aside className="preview-column">
-          <div className="preview-header"><div><span className="live-dot" />Live preview</div><span>80mm thermal</span></div>
-          <div className="receipt-stage">
-            <div className="receipt" ref={receiptRef}>
-              <div className="receipt-top">
-                {logo ? <img className="receipt-logo" src={logo} alt="Business logo" /> : <div className="receipt-logo-fallback">{business.slice(0, 1) || "R"}</div>}
+          <div className="preview-header"><div><span className="live-dot" />Live preview</div><span>A4 invoice</span></div>
+          <div className="invoice-stage">
+            <div className="invoice" ref={invoiceRef}>
+              <div className="invoice-top">
+                {logo ? <img className="invoice-logo" src={logo} alt="Business logo" /> : <div className="invoice-logo-fallback">{business.slice(0, 1) || "R"}</div>}
                 <h3>{business || "Your business"}</h3>
                 <p>{address.split("\n").map((line, index) => <span key={`${line}-${index}`}>{line}<br /></span>)}</p>
               </div>
               <div className="dashed" />
-              <div className="receipt-meta"><span>Receipt</span><strong>{receiptNo}</strong><span>Date</span><strong>{date}</strong><span>Payment</span><strong>{payment}</strong></div>
+              <div className="invoice-meta"><span>Invoice</span><strong>{invoiceNo}</strong><span>Date</span><strong>{date}</strong><span>Payment</span><strong>{payment}</strong></div>
               <div className="dashed" />
-              <div className="receipt-items">
-                {items.map((item) => <div className="receipt-item" key={item.id}><div><strong>{item.description || "Item"}</strong><span>{item.quantity} × {formatMoney(item.price)}</span></div><strong>{formatMoney(item.quantity * item.price)}</strong></div>)}
+              <div className="invoice-items">
+                {items.map((item) => <div className="invoice-item" key={item.id}><div><strong>{item.description || "Item"}</strong><span>{item.quantity} × {formatMoney(item.price)}</span></div><strong>{formatMoney(item.quantity * item.price)}</strong></div>)}
               </div>
               <div className="dashed" />
-              <div className="receipt-totals">
+              <div className="invoice-totals">
                 <div><span>Subtotal</span><strong>{formatMoney(subtotal)}</strong></div>
                 {discount > 0 && <div><span>Discount ({discount}%)</span><strong>-{formatMoney(discountAmount)}</strong></div>}
                 {tax > 0 && <div><span>Tax ({tax}%)</span><strong>{formatMoney(taxAmount)}</strong></div>}
                 <div className="grand-total"><span>Total</span><strong>{formatMoney(total)}</strong></div>
               </div>
-              <div className="receipt-footer"><div className="barcode">|||| ||| |||| | ||||| || ||||</div><p>{note}</p><small>Generated with Receiptly</small></div>
+              <div className="invoice-footer"><div className="barcode">|||| ||| |||| | ||||| || ||||</div><p>{note}</p><small>Generated with Invoicely</small></div>
             </div>
           </div>
           <div className="export-row"><button className="primary-button" onClick={exportPdf}>Download PDF</button><button className="square-button" onClick={() => exportImage("png")}>PNG</button><button className="square-button" onClick={() => exportImage("jpg")}>JPG</button></div>
@@ -177,12 +177,12 @@ export default function Home() {
       </section>
 
       <section className="value-strip">
-        <div><span>01</span><strong>Private by design</strong><p>Your receipt data stays in your browser.</p></div>
+        <div><span>01</span><strong>Private by design</strong><p>Your invoice data stays in your browser.</p></div>
         <div><span>02</span><strong>Instant export</strong><p>Download polished files in PDF, PNG or JPG.</p></div>
-        <div><span>03</span><strong>No account needed</strong><p>Open the page, make your receipt, leave.</p></div>
+        <div><span>03</span><strong>No account needed</strong><p>Open the page, make your invoice, leave.</p></div>
       </section>
 
-      <footer><div className="brand"><span className="brand-icon small">R</span><span>Receiptly</span></div><p>Simple tools for small businesses.</p><a href="https://github.com/ennouaimi/receipt-generator">Open source on GitHub</a></footer>
+      <footer><div className="brand"><span className="brand-icon small">R</span><span>Invoicely</span></div><p>Simple tools for small businesses.</p><a href="https://github.com/ennouaimi/invoice-generator">Open source on GitHub</a></footer>
     </main>
   );
 }
