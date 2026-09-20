@@ -11,7 +11,7 @@ Create professional invoices in your browser or generate them programmatically �
 
 <br />
 
-<img src="https://image.thum.io/get/width/1400/https://try-invoicr.vercel.app/" alt="Invoicr — free invoice maker" width="100%" />
+<img src="./assets/invoicr-preview.webp" alt="Invoicr — free invoice maker" width="100%" />
 
 </div>
 
