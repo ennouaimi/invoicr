@@ -5,7 +5,7 @@ import { toJpeg, toPng } from "html-to-image";
 import jsPDF from "jspdf";
 import { getInvoiceLabels, type InvoiceLanguage } from "../lib/invoice";
 
-type Item = { id: number; description: string; quantity: number; price: number };
+type Item = {\n  id: number;\n  description: string;\n  quantity: number;\n  price: number;\n};
 
 const currencies = [
   ["EUR", "€"],
@@ -42,22 +42,22 @@ export default function Home() {
   const invoiceRef = useRef<HTMLDivElement>(null);
 
   const symbol = currencies.find(([code]) => code === currency)?.[1] ?? currency;
-  const subtotal = useMemo(() => items.reduce((sum, item) => sum + item.quantity * item.price, 0), [items]);
+  const subtotal = useMemo(\n    () => items.reduce((sum, item) => sum + item.quantity * item.price, 0),\n    [items],\n  );
   const discountAmount = subtotal * (Math.max(0, discount) / 100);
   const taxable = Math.max(0, subtotal - discountAmount);
   const taxAmount = taxable * (Math.max(0, tax) / 100);
   const total = taxable + taxAmount;
 
   function updateItem(id: number, patch: Partial<Item>) {
-    setItems((current) => current.map((item) => (item.id === id ? { ...item, ...patch } : item)));
+    setItems((current) =>\n      current.map((item) => (item.id === id ? { ...item, ...patch } : item)),\n    );
   }
 
   function addItem() {
-    setItems((current) => [...current, { id: Date.now(), description: "New item", quantity: 1, price: 0 }]);
+    setItems((current) => [\n      ...current,\n      { id: Date.now(), description: "New item", quantity: 1, price: 0 },\n    ]);
   }
 
   function removeItem(id: number) {
-    setItems((current) => (current.length === 1 ? current : current.filter((item) => item.id !== id)));
+    setItems((current) =>\n      current.length === 1\n        ? current\n        : current.filter((item) => item.id !== id),\n    );
   }
 
   function uploadLogo(event: ChangeEvent<HTMLInputElement>) {
@@ -70,7 +70,7 @@ export default function Home() {
 
   async function exportImage(type: "png" | "jpg") {
     if (!invoiceRef.current) return;
-    const options = { pixelRatio: 3, backgroundColor: "#fffaf3", cacheBust: true };
+    const options = {\n      pixelRatio: 3,\n      backgroundColor: "#fffaf3",\n      cacheBust: true,\n    };
     const dataUrl = type === "png"
       ? await toPng(invoiceRef.current, options)
       : await toJpeg(invoiceRef.current, { ...options, quality: 0.96 });
@@ -82,13 +82,13 @@ export default function Home() {
 
   async function exportPdf() {
     if (!invoiceRef.current) return;
-    const dataUrl = await toPng(invoiceRef.current, { pixelRatio: 3, backgroundColor: "#fffaf3", cacheBust: true });
+    const dataUrl = await toPng(invoiceRef.current, {\n      pixelRatio: 3,\n      backgroundColor: "#fffaf3",\n      cacheBust: true,\n    });
     const img = new Image();
     img.src = dataUrl;
-    await new Promise((resolve) => { img.onload = resolve; });
+    await new Promise((resolve) => {\n      img.onload = resolve;\n    });
     const width = 190;
     const height = (img.height / img.width) * width;
-    const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+    const pdf = new jsPDF({\n      orientation: "portrait",\n      unit: "mm",\n      format: "a4",\n    });
     pdf.addImage(dataUrl, "PNG", 10, 10, width, Math.min(height, 277));
     pdf.save(`invoice-${invoiceNo}.pdf`);
   }
