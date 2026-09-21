@@ -51,13 +51,6 @@ function createInitialInvoice(): InvoiceEditorValue {
   };
 }
 
-/**
- * Invoice maker page.
- *
- * The page owns state and derived values while dedicated components handle
- * editing and presentation. This keeps the data flow explicit and avoids
- * coupling the form to the printable preview.
- */
 export default function Home() {
   const [invoice, setInvoice] = useState<InvoiceEditorValue>(
     createInitialInvoice,
