@@ -66,11 +66,14 @@ export async function renderInvoicePdf(
     `${labels.date}: ${invoice.date ?? new Date().toISOString().slice(0, 10)}`,
   );
 
+  const paymentMethod = invoice.payment?.method
+    ? (labels.paymentMethods[invoice.payment.method] ?? invoice.payment.method)
+    : "-";
   const paymentSuffix = invoice.payment?.last4
     ? ` ****${invoice.payment.last4}`
     : "";
   drawText(
-    `${labels.payment}: ${invoice.payment?.method ?? "-"}${paymentSuffix}`,
+    `${labels.payment}: ${paymentMethod}${paymentSuffix}`,
   );
 
   y -= 8;
@@ -107,7 +110,7 @@ export async function renderInvoicePdf(
     true,
   );
   y -= 12;
-  drawText(invoice.note ?? "Thank you for your purchase!", LEFT_MARGIN, 8);
+  drawText(invoice.note ?? labels.defaultNote, LEFT_MARGIN, 8);
 
   return document.save();
 }
