@@ -18,7 +18,7 @@ const cors = {
 };
 
 function pdfText(value: string) {
-  return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^ -~]/g, "");
+  return value\n    .normalize("NFD")\n    .replace(/[\\u0300-\\u036f]/g, "")\n    .replace(/[^ -~]/g, "");
 }
 
 export async function OPTIONS() {
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
   try {
     body = await request.json();
   } catch {
-    return Response.json({ error: "Invalid JSON body." }, { status: 400, headers: cors });
+    return Response.json(\n      { error: "Invalid JSON body." },\n      { status: 400, headers: cors },\n    );
   }
 
   const error = validateInvoice(body);
@@ -42,9 +42,9 @@ export async function POST(request: Request) {
       headers: { ...cors, "Content-Type": "text/html; charset=utf-8" },
     });
   }
-  if (format === "json") return Response.json({ invoice: body, totals: totals(body) }, { headers: cors });
+  if (format === "json") {\n    return Response.json(\n      { invoice: body, totals: totals(body) },\n      { headers: cors },\n    );\n  }
   if (format !== "pdf") {
-    return Response.json({ error: "format must be pdf, html or json." }, { status: 400, headers: cors });
+    return Response.json(\n      { error: "format must be pdf, html or json." },\n      { status: 400, headers: cors },\n    );
   }
 
   const labels = getInvoiceLabels(body.language);
