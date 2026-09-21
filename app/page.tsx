@@ -1,9 +1,12 @@
 "use client";
 
 import { ChangeEvent, useMemo, useRef, useState } from "react";
-import { toJpeg, toPng } from "html-to-image";
-import jsPDF from "jspdf";
 import { getInvoiceLabels, type InvoiceLanguage } from "../lib/invoice";
+import {
+  exportInvoiceImage,
+  exportInvoicePdf,
+  type ImageFormat,
+} from "../lib/invoice-export";
 
 type Item = {
   id: number;
@@ -90,44 +93,14 @@ San Francisco, CA 94105",
     reader.readAsDataURL(file);
   }
 
-  async function exportImage(type: "png" | "jpg") {
+  async function exportImage(format: ImageFormat) {
     if (!invoiceRef.current) return;
-    const options = {
-      pixelRatio: 3,
-      backgroundColor: "#fffaf3",
-      cacheBust: true,
-    };
-    const dataUrl =
-      type === "png"
-        ? await toPng(invoiceRef.current, options)
-        : await toJpeg(invoiceRef.current, { ...options, quality: 0.96 });
-    const link = document.createElement("a");
-    link.download = `invoice-${invoiceNo}.${type === "jpg" ? "jpg" : "png"}`;
-    link.href = dataUrl;
-    link.click();
+    await exportInvoiceImage(invoiceRef.current, invoiceNo, format);
   }
 
   async function exportPdf() {
     if (!invoiceRef.current) return;
-    const dataUrl = await toPng(invoiceRef.current, {
-      pixelRatio: 3,
-      backgroundColor: "#fffaf3",
-      cacheBust: true,
-    });
-    const img = new Image();
-    img.src = dataUrl;
-    await new Promise((resolve) => {
-      img.onload = resolve;
-    });
-    const width = 190;
-    const height = (img.height / img.width) * width;
-    const pdf = new jsPDF({
-      orientation: "portrait",
-      unit: "mm",
-      format: "a4",
-    });
-    pdf.addImage(dataUrl, "PNG", 10, 10, width, Math.min(height, 277));
-    pdf.save(`invoice-${invoiceNo}.pdf`);
+    await exportInvoicePdf(invoiceRef.current, invoiceNo);
   }
 
   const formatMoney = (value: number) =>
