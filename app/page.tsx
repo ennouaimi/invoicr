@@ -3,6 +3,7 @@
 import { ChangeEvent, useMemo, useRef, useState } from "react";
 import { toJpeg, toPng } from "html-to-image";
 import jsPDF from "jspdf";
+import { getInvoiceLabels, type InvoiceLanguage } from "../lib/invoice";
 
 type Item = { id: number; description: string; quantity: number; price: number };
 
@@ -28,6 +29,8 @@ export default function Home() {
   });
   const [payment, setPayment] = useState("Bank transfer");
   const [currency, setCurrency] = useState("EUR");
+  const [language, setLanguage] = useState<InvoiceLanguage>("en");
+  const labels = getInvoiceLabels(language);
   const [tax, setTax] = useState(20);
   const [discount, setDiscount] = useState(0);
   const [note, setNote] = useState("Thank you for your business.");
@@ -127,6 +130,7 @@ export default function Home() {
             <label>Due date<input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} /></label>
             <label>Payment method<select value={payment} onChange={(e) => setPayment(e.target.value)}><option>Bank transfer</option><option>Card</option><option>Cash</option><option>PayPal</option><option>Other</option></select></label>
             <label>Currency<select value={currency} onChange={(e) => setCurrency(e.target.value)}>{currencies.map(([code]) => <option key={code}>{code}</option>)}</select></label>
+            <label>Invoice language<select value={language} onChange={(e) => setLanguage(e.target.value as InvoiceLanguage)}><option value="en">English</option><option value="fr">Français</option></select></label>
             <label>Logo<input className="file-input" type="file" accept="image/*" onChange={uploadLogo} /></label>
           </div>
 
@@ -172,24 +176,24 @@ export default function Home() {
                   <h3>{business || "Your business"}</h3>
                   <p>{address}</p>
                 </div>
-                <div className="invoice-title"><h2>INVOICE</h2><strong>#{invoiceNo}</strong></div>
+                <div className="invoice-title"><h2>{labels.invoice.toUpperCase()}</h2><strong>#{invoiceNo}</strong></div>
               </div>
               <div className="invoice-parties">
-                <div><span>FROM</span><strong>{business}</strong><p>{address}</p></div>
-                <div><span>BILL TO</span><strong>{client}</strong><p>{clientAddress}<br />{clientEmail}</p></div>
-                <div><span>ISSUED</span><strong>{date}</strong><span>DUE</span><strong>{dueDate}</strong><span>PAYMENT</span><strong>{payment}</strong></div>
+                <div><span>{labels.from.toUpperCase()}</span><strong>{business}</strong><p>{address}</p></div>
+                <div><span>{labels.billTo.toUpperCase()}</span><strong>{client}</strong><p>{clientAddress}<br />{clientEmail}</p></div>
+                <div><span>{labels.date.toUpperCase()}</span><strong>{date}</strong><span>{labels.dueDate.toUpperCase()}</span><strong>{dueDate}</strong><span>{labels.payment.toUpperCase()}</span><strong>{payment}</strong></div>
               </div>
               <div className="invoice-table">
-                <div className="invoice-table-head"><span>Description</span><span>Qty</span><span>Rate</span><span>Amount</span></div>
+                <div className="invoice-table-head"><span>{labels.description}</span><span>{labels.quantity}</span><span>{labels.rate}</span><span>{labels.amount}</span></div>
                 {items.map((item) => <div className="invoice-line" key={item.id}><strong>{item.description || "Item"}</strong><span>{item.quantity}</span><span>{formatMoney(item.price)}</span><strong>{formatMoney(item.quantity * item.price)}</strong></div>)}
               </div>
               <div className="invoice-summary">
-                <div><span>Subtotal</span><strong>{formatMoney(subtotal)}</strong></div>
-                {discount > 0 && <div><span>Discount ({discount}%)</span><strong>-{formatMoney(discountAmount)}</strong></div>}
-                {tax > 0 && <div><span>Tax ({tax}%)</span><strong>{formatMoney(taxAmount)}</strong></div>}
-                <div className="invoice-total"><span>Total due</span><strong>{formatMoney(total)}</strong></div>
+                <div><span>{labels.subtotal}</span><strong>{formatMoney(subtotal)}</strong></div>
+                {discount > 0 && <div><span>{labels.discount} ({discount}%)</span><strong>-{formatMoney(discountAmount)}</strong></div>}
+                {tax > 0 && <div><span>{labels.tax} ({tax}%)</span><strong>{formatMoney(taxAmount)}</strong></div>}
+                <div className="invoice-total"><span>{labels.total}</span><strong>{formatMoney(total)}</strong></div>
               </div>
-              <div className="invoice-note"><strong>Notes</strong><p>{note}</p></div>
+              <div className="invoice-note"><strong>{labels.notes}</strong><p>{note}</p></div>
               <small className="invoice-made">Generated with Invoicr</small>
             </div>
           </div>
