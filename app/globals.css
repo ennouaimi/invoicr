@@ -4,8 +4,10 @@
   --bg: #f8f2e8;
   --surface: #fffdf8;
   --surface-2: #f2eadf;
-  --ink: #26231f;
-  --muted: #7c746a;
+  /* Warm text tones soften contrast against the cream surfaces. */
+  --ink: #2f2923;
+  --ink-secondary: #4b433b;
+  --muted: #8c8176;
   --border: #ded4c7;
   --accent: #e96f43;
   --accent-dark: #b94f2d;
@@ -197,7 +199,7 @@ select {
 .form-grid label {
   display: grid;
   gap: 8px;
-  color: #574f46;
+  color: var(--ink-secondary);
   font-size: 13px;
   font-weight: 700;
 }
@@ -284,7 +286,7 @@ textarea {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: #5d554d;
+  color: var(--ink-secondary);
   font-size: 13px;
   font-weight: 700;
   margin-bottom: 16px;
