@@ -28,6 +28,13 @@ export function InvoicePreview({
 }: InvoicePreviewProps) {
   const labels = getInvoiceLabels(invoice.language);
 
+  // Known payment methods are stored as stable values and translated only at render time.
+  const paymentMethod = labels.paymentMethods[invoice.payment] ?? invoice.payment;
+  const note =
+    invoice.note === "Thank you for your business."
+      ? labels.defaultNote
+      : invoice.note;
+
   return (
     <aside className="preview-column">
       <div className="preview-header">
@@ -83,7 +90,7 @@ export function InvoicePreview({
               <span>{labels.dueDate.toUpperCase()}</span>
               <strong>{invoice.dueDate}</strong>
               <span>{labels.payment.toUpperCase()}</span>
-              <strong>{invoice.payment}</strong>
+              <strong>{paymentMethod}</strong>
             </div>
           </div>
 
@@ -137,10 +144,10 @@ export function InvoicePreview({
 
           <div className="invoice-note">
             <strong>{labels.notes}</strong>
-            <p>{invoice.note}</p>
+            <p>{note}</p>
           </div>
 
-          <small className="invoice-made">Generated with Invoicr</small>
+          <small className="invoice-made">{labels.generatedWith}</small>
         </div>
       </div>
 
