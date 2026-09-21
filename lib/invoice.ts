@@ -60,6 +60,9 @@ export type InvoiceLabels = {
   discount: string;
   total: string;
   notes: string;
+  generatedWith: string;
+  defaultNote: string;
+  paymentMethods: Record<string, string>;
 };
 
 const INVOICE_LABELS: Record<InvoiceLanguage, InvoiceLabels> = {
@@ -80,6 +83,15 @@ const INVOICE_LABELS: Record<InvoiceLanguage, InvoiceLabels> = {
     discount: "Discount",
     total: "Total",
     notes: "Notes",
+    generatedWith: "Generated with Invoicr",
+    defaultNote: "Thank you for your business.",
+    paymentMethods: {
+      "Bank transfer": "Bank transfer",
+      Card: "Card",
+      Cash: "Cash",
+      PayPal: "PayPal",
+      Other: "Other",
+    },
   },
   fr: {
     invoice: "Facture",
@@ -98,6 +110,15 @@ const INVOICE_LABELS: Record<InvoiceLanguage, InvoiceLabels> = {
     discount: "Remise",
     total: "Total",
     notes: "Notes",
+    generatedWith: "Généré avec Invoicr",
+    defaultNote: "Merci pour votre confiance.",
+    paymentMethods: {
+      "Bank transfer": "Virement bancaire",
+      Card: "Carte",
+      Cash: "Espèces",
+      PayPal: "PayPal",
+      Other: "Autre",
+    },
   },
 };
 
