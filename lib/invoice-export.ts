@@ -9,14 +9,16 @@ const CAPTURE_OPTIONS = {
   cacheBust: true,
 } as const;
 
-/** Triggers a browser download without adding temporary DOM elements. */\nfunction triggerDownload(dataUrl: string, filename: string): void {
+/** Triggers a browser download without adding temporary DOM elements. */
+function triggerDownload(dataUrl: string, filename: string): void {
   const link = document.createElement("a");
   link.download = filename;
   link.href = dataUrl;
   link.click();
 }
 
-/** Waits until an in-memory image can safely be measured by jsPDF. */\nfunction waitForImage(image: HTMLImageElement): Promise<void> {
+/** Waits until an in-memory image can safely be measured by jsPDF. */
+function waitForImage(image: HTMLImageElement): Promise<void> {
   return new Promise((resolve, reject) => {
     image.onload = () => resolve();
     image.onerror = () => reject(new Error("Failed to load invoice preview."));
