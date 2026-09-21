@@ -16,26 +16,30 @@ const CORS_HEADERS = {
 
 type ResponseFormat = "pdf" | "html" | "json";
 
-/** Builds API errors with the same CORS headers as successful responses. */\nfunction jsonError(message: string, status: number): Response {
+/** Builds API errors with the same CORS headers as successful responses. */
+function jsonError(message: string, status: number): Response {
   return Response.json(
     { error: message },
     { status, headers: CORS_HEADERS },
   );
 }
 
-/** Reads and validates the requested output format. PDF is the default. */\nfunction parseResponseFormat(request: Request): ResponseFormat | null {
+/** Reads and validates the requested output format. PDF is the default. */
+function parseResponseFormat(request: Request): ResponseFormat | null {
   const format = new URL(request.url).searchParams.get("format") ?? "pdf";
   return format === "pdf" || format === "html" || format === "json"
     ? format
     : null;
 }
 
-/** Sanitizes user-provided invoice numbers before using them in a header. */\nfunction invoiceFilename(invoiceNumber?: string): string {
+/** Sanitizes user-provided invoice numbers before using them in a header. */
+function invoiceFilename(invoiceNumber?: string): string {
   const safeName = (invoiceNumber ?? "invoice").replace(/[^a-z0-9_-]/gi, "-");
   return `${safeName}.pdf`;
 }
 
-/** Handles CORS preflight requests for browser API consumers. */\nexport async function OPTIONS(): Promise<Response> {
+/** Handles CORS preflight requests for browser API consumers. */
+export async function OPTIONS(): Promise<Response> {
   return new Response(null, {
     status: 204,
     headers: CORS_HEADERS,
