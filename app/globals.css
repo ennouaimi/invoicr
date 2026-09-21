@@ -210,6 +210,7 @@ input,
 textarea,
 select {
   width: 100%;
+  font-weight: 500;
   border: 1px solid var(--border);
   background: #fffdfa;
   border-radius: 12px;
