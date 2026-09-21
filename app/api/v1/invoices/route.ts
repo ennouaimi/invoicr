@@ -2,12 +2,12 @@ import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 
 import {
   getInvoiceLabels,
-  invoiceHtml,
   money,
   totals,
   validateInvoice,
   type InvoicePayload,
 } from "../../../../lib/invoice";
+import { renderInvoiceHtml } from "../../../../lib/invoice-html";
 
 export const runtime = "nodejs";
 
@@ -44,7 +44,7 @@ export async function POST(request: Request) {
 
   const format = new URL(request.url).searchParams.get("format") ?? "pdf";
   if (format === "html") {
-    return new Response(invoiceHtml(body), {
+    return new Response(renderInvoiceHtml(body), {
       headers: { ...cors, "Content-Type": "text/html; charset=utf-8" },
     });
   }
