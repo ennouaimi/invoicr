@@ -1,122 +1,142 @@
 "use client";
 
-import { ChangeEvent, useMemo, useRef, useState } from "react";
-import { getInvoiceLabels, type InvoiceLanguage } from "../lib/invoice";
+import { useMemo, useRef, useState } from "react";
+
+import { InvoiceEditor } from "../components/invoice/InvoiceEditor";
+import { InvoicePreview } from "../components/invoice/InvoicePreview";
+import type {
+  EditorItem,
+  InvoiceEditorValue,
+} from "../components/invoice/types";
 import {
   exportInvoiceImage,
   exportInvoicePdf,
   type ImageFormat,
 } from "../lib/invoice-export";
 
-type Item = {
-  id: number;
-  description: string;
-  quantity: number;
-  price: number;
+const CURRENCY_SYMBOLS: Record<string, string> = {
+  EUR: "€",
+  USD: "$",
+  GBP: "£",
+  MAD: "MAD",
 };
 
-// Currencies supported by the browser-based invoice editor.
-const currencies = [
-  ["EUR", "€"],
-  ["USD", "$"],
-  ["GBP", "£"],
-  ["MAD", "MAD"],
-];
+function defaultDueDate(): string {
+  const date = new Date();
+  date.setDate(date.getDate() + 30);
+  return date.toISOString().slice(0, 10);
+}
+
+function createInitialInvoice(): InvoiceEditorValue {
+  return {
+    business: "Northstar Studio",
+    address: "120 Market Street\nSan Francisco, CA 94105",
+    client: "Brightside Labs",
+    clientAddress: "455 Mission Street\nSan Francisco, CA 94105",
+    clientEmail: "billing@brightside.example",
+    invoiceNo: "INV-2026-001",
+    date: new Date().toISOString().slice(0, 10),
+    dueDate: defaultDueDate(),
+    payment: "Bank transfer",
+    currency: "EUR",
+    language: "en",
+    tax: 20,
+    discount: 0,
+    note: "Thank you for your business.",
+    logo: null,
+    items: [
+      { id: 1, description: "Brand design package", quantity: 1, price: 120 },
+      { id: 2, description: "Business cards", quantity: 2, price: 25 },
+    ],
+  };
+}
 
 /**
- * Interactive invoice editor.
+ * Invoice maker page.
  *
- * State stays local to the browser: editing an invoice does not persist or
- * send its contents to the API. Export concerns live in lib/invoice-export.
+ * The page owns state and derived values while dedicated components handle
+ * editing and presentation. This keeps the data flow explicit and avoids
+ * coupling the form to the printable preview.
  */
 export default function Home() {
-  const [business, setBusiness] = useState("Northstar Studio");
-  const [address, setAddress] = useState(
-    "120 Market Street\
-San Francisco, CA 94105",
+  const [invoice, setInvoice] = useState<InvoiceEditorValue>(
+    createInitialInvoice,
   );
-  const [client, setClient] = useState("Brightside Labs");
-  const [clientAddress, setClientAddress] = useState(
-    "455 Mission Street\
-San Francisco, CA 94105",
-  );
-  const [clientEmail, setClientEmail] = useState("billing@brightside.example");
-  const [invoiceNo, setInvoiceNo] = useState("INV-2026-001");
-  const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10));
-  const [dueDate, setDueDate] = useState(() => {
-    const value = new Date();
-    value.setDate(value.getDate() + 30);
-    return value.toISOString().slice(0, 10);
-  });
-  const [payment, setPayment] = useState("Bank transfer");
-  const [currency, setCurrency] = useState("EUR");
-  const [language, setLanguage] = useState<InvoiceLanguage>("en");
-  const labels = getInvoiceLabels(language);
-  const [tax, setTax] = useState(20);
-  const [discount, setDiscount] = useState(0);
-  const [note, setNote] = useState("Thank you for your business.");
-  const [logo, setLogo] = useState<string | null>(null);
-  const [items, setItems] = useState<Item[]>([
-    { id: 1, description: "Brand design package", quantity: 1, price: 120 },
-    { id: 2, description: "Business cards", quantity: 2, price: 25 },
-  ]);
   const invoiceRef = useRef<HTMLDivElement>(null);
 
-  const symbol =
-    currencies.find(([code]) => code === currency)?.[1] ?? currency;
-  const subtotal = useMemo(
-    () => items.reduce((sum, item) => sum + item.quantity * item.price, 0),
-    [items],
-  );
-  const discountAmount = subtotal * (Math.max(0, discount) / 100);
-  const taxable = Math.max(0, subtotal - discountAmount);
-  const taxAmount = taxable * (Math.max(0, tax) / 100);
-  const total = taxable + taxAmount;
-
-  // Item mutations are kept together so the JSX remains focused on rendering.
-  function updateItem(id: number, patch: Partial<Item>) {
-    setItems((current) =>
-      current.map((item) => (item.id === id ? { ...item, ...patch } : item)),
+  const amounts = useMemo(() => {
+    const subtotal = invoice.items.reduce(
+      (sum, item) => sum + item.quantity * item.price,
+      0,
     );
+    const discount = subtotal * (Math.max(0, invoice.discount) / 100);
+    const taxable = Math.max(0, subtotal - discount);
+    const tax = taxable * (Math.max(0, invoice.tax) / 100);
+
+    return {
+      subtotal,
+      discount,
+      tax,
+      total: taxable + tax,
+    };
+  }, [invoice.items, invoice.discount, invoice.tax]);
+
+  function updateField<K extends keyof InvoiceEditorValue>(
+    field: K,
+    value: InvoiceEditorValue[K],
+  ) {
+    setInvoice((current) => ({ ...current, [field]: value }));
+  }
+
+  function updateItem(id: number, patch: Partial<EditorItem>) {
+    setInvoice((current) => ({
+      ...current,
+      items: current.items.map((item) =>
+        item.id === id ? { ...item, ...patch } : item,
+      ),
+    }));
   }
 
   function addItem() {
-    setItems((current) => [
+    setInvoice((current) => ({
       ...current,
-      { id: Date.now(), description: "New item", quantity: 1, price: 0 },
-    ]);
+      items: [
+        ...current.items,
+        {
+          id: Date.now(),
+          description: "New item",
+          quantity: 1,
+          price: 0,
+        },
+      ],
+    }));
   }
 
   function removeItem(id: number) {
-    setItems((current) =>
-      current.length === 1 ? current : current.filter((item) => item.id !== id),
-    );
+    setInvoice((current) => ({
+      ...current,
+      items:
+        current.items.length === 1
+          ? current.items
+          : current.items.filter((item) => item.id !== id),
+    }));
   }
 
-  // Logos are kept as data URLs so invoice data never needs server-side storage.
-  function uploadLogo(event: ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => setLogo(String(reader.result));
-    reader.readAsDataURL(file);
+  function formatMoney(value: number): string {
+    return invoice.currency === "MAD"
+      ? `${value.toFixed(2)} MAD`
+      : `${CURRENCY_SYMBOLS[invoice.currency] ?? invoice.currency}${value.toFixed(2)}`;
   }
 
-  // Export helpers receive the rendered preview instead of duplicating capture logic.
   async function exportImage(format: ImageFormat) {
     if (!invoiceRef.current) return;
-    await exportInvoiceImage(invoiceRef.current, invoiceNo, format);
+    await exportInvoiceImage(invoiceRef.current, invoice.invoiceNo, format);
   }
 
   async function exportPdf() {
     if (!invoiceRef.current) return;
-    await exportInvoicePdf(invoiceRef.current, invoiceNo);
+    await exportInvoicePdf(invoiceRef.current, invoice.invoiceNo);
   }
-
-  const formatMoney = (value: number) =>
-    currency === "MAD"
-      ? `${value.toFixed(2)} MAD`
-      : `${symbol}${value.toFixed(2)}`;
 
   return (
     <main className="site-shell">
@@ -172,342 +192,22 @@ San Francisco, CA 94105",
       </section>
 
       <section className="workspace" id="maker">
-        <div className="editor-card">
-          <div className="section-heading">
-            <div>
-              <span>01</span>
-              <h2>Invoice details</h2>
-            </div>
-            <p>Everything updates instantly.</p>
-          </div>
+        <InvoiceEditor
+          value={invoice}
+          onChange={updateField}
+          onAddItem={addItem}
+          onUpdateItem={updateItem}
+          onRemoveItem={removeItem}
+        />
 
-          <div className="form-grid">
-            <label>
-              Business name
-              <input
-                value={business}
-                onChange={(e) => setBusiness(e.target.value)}
-              />
-            </label>
-            <label>
-              Invoice number
-              <input
-                value={invoiceNo}
-                onChange={(e) => setInvoiceNo(e.target.value)}
-              />
-            </label>
-            <label className="span-2">
-              Address
-              <textarea
-                rows={3}
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-              />
-            </label>
-            <label>
-              Issue date
-              <input
-                type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-              />
-            </label>
-            <label>
-              Due date
-              <input
-                type="date"
-                value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
-              />
-            </label>
-            <label>
-              Payment method
-              <select
-                value={payment}
-                onChange={(e) => setPayment(e.target.value)}
-              >
-                <option>Bank transfer</option>
-                <option>Card</option>
-                <option>Cash</option>
-                <option>PayPal</option>
-                <option>Other</option>
-              </select>
-            </label>
-            <label>
-              Currency
-              <select
-                value={currency}
-                onChange={(e) => setCurrency(e.target.value)}
-              >
-                {currencies.map(([code]) => (
-                  <option key={code}>{code}</option>
-                ))}
-              </select>
-            </label>
-            <label>
-              Invoice language
-              <select
-                value={language}
-                onChange={(e) => setLanguage(e.target.value as InvoiceLanguage)}
-              >
-                <option value="en">English</option>
-                <option value="fr">Français</option>
-              </select>
-            </label>
-            <label>
-              Logo
-              <input
-                className="file-input"
-                type="file"
-                accept="image/*"
-                onChange={uploadLogo}
-              />
-            </label>
-          </div>
-
-          <div className="section-divider" />
-          <div className="section-heading">
-            <div>
-              <span>02</span>
-              <h2>Bill to</h2>
-            </div>
-          </div>
-          <div className="form-grid">
-            <label>
-              Client / company
-              <input
-                value={client}
-                onChange={(e) => setClient(e.target.value)}
-              />
-            </label>
-            <label>
-              Client email
-              <input
-                value={clientEmail}
-                onChange={(e) => setClientEmail(e.target.value)}
-              />
-            </label>
-            <label className="span-2">
-              Billing address
-              <textarea
-                rows={2}
-                value={clientAddress}
-                onChange={(e) => setClientAddress(e.target.value)}
-              />
-            </label>
-          </div>
-          <div className="section-divider" />
-
-          <div className="section-heading compact">
-            <div>
-              <span>03</span>
-              <h2>Items & services</h2>
-            </div>
-            <button className="text-action" onClick={addItem}>
-              + Add item
-            </button>
-          </div>
-          <div className="items-editor">
-            {items.map((item, index) => (
-              <div className="item-row" key={item.id}>
-                <div className="item-index">
-                  {String(index + 1).padStart(2, "0")}
-                </div>
-                <input
-                  className="item-name"
-                  value={item.description}
-                  onChange={(e) =>
-                    updateItem(item.id, { description: e.target.value })
-                  }
-                />
-                <input
-                  type="number"
-                  min="1"
-                  value={item.quantity}
-                  onChange={(e) =>
-                    updateItem(item.id, {
-                      quantity: Number(e.target.value) || 0,
-                    })
-                  }
-                />
-                <input
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  value={item.price}
-                  onChange={(e) =>
-                    updateItem(item.id, { price: Number(e.target.value) || 0 })
-                  }
-                />
-                <button
-                  className="remove-button"
-                  onClick={() => removeItem(item.id)}
-                  aria-label="Remove item"
-                >
-                  ×
-                </button>
-              </div>
-            ))}
-            <div className="item-labels">
-              <span />
-              <span>Description</span>
-              <span>Qty</span>
-              <span>Price</span>
-              <span />
-            </div>
-          </div>
-
-          <div className="section-divider" />
-
-          <div className="form-grid totals-form">
-            <label>
-              Tax (%)
-              <input
-                type="number"
-                min="0"
-                value={tax}
-                onChange={(e) => setTax(Number(e.target.value) || 0)}
-              />
-            </label>
-            <label>
-              Discount (%)
-              <input
-                type="number"
-                min="0"
-                max="100"
-                value={discount}
-                onChange={(e) => setDiscount(Number(e.target.value) || 0)}
-              />
-            </label>
-            <label className="span-2">
-              Footer note
-              <input value={note} onChange={(e) => setNote(e.target.value)} />
-            </label>
-          </div>
-        </div>
-
-        <aside className="preview-column">
-          <div className="preview-header">
-            <div>
-              <span className="live-dot" />
-              Live preview
-            </div>
-            <span>A4 invoice</span>
-          </div>
-          <div className="invoice-stage">
-            <div className="invoice" ref={invoiceRef}>
-              <div className="invoice-head">
-                <div>
-                  {logo ? (
-                    <img
-                      className="invoice-logo"
-                      src={logo}
-                      alt="Business logo"
-                    />
-                  ) : (
-                    <div className="invoice-logo-fallback">
-                      {business.slice(0, 1) || "I"}
-                    </div>
-                  )}
-                  <h3>{business || "Your business"}</h3>
-                  <p>{address}</p>
-                </div>
-                <div className="invoice-title">
-                  <h2>{labels.invoice.toUpperCase()}</h2>
-                  <strong>#{invoiceNo}</strong>
-                </div>
-              </div>
-              <div className="invoice-parties">
-                <div>
-                  <span>{labels.from.toUpperCase()}</span>
-                  <strong>{business}</strong>
-                  <p>{address}</p>
-                </div>
-                <div>
-                  <span>{labels.billTo.toUpperCase()}</span>
-                  <strong>{client}</strong>
-                  <p>
-                    {clientAddress}
-                    <br />
-                    {clientEmail}
-                  </p>
-                </div>
-                <div>
-                  <span>{labels.date.toUpperCase()}</span>
-                  <strong>{date}</strong>
-                  <span>{labels.dueDate.toUpperCase()}</span>
-                  <strong>{dueDate}</strong>
-                  <span>{labels.payment.toUpperCase()}</span>
-                  <strong>{payment}</strong>
-                </div>
-              </div>
-              <div className="invoice-table">
-                <div className="invoice-table-head">
-                  <span>{labels.description}</span>
-                  <span>{labels.quantity}</span>
-                  <span>{labels.rate}</span>
-                  <span>{labels.amount}</span>
-                </div>
-                {items.map((item) => (
-                  <div className="invoice-line" key={item.id}>
-                    <strong>{item.description || "Item"}</strong>
-                    <span>{item.quantity}</span>
-                    <span>{formatMoney(item.price)}</span>
-                    <strong>{formatMoney(item.quantity * item.price)}</strong>
-                  </div>
-                ))}
-              </div>
-              <div className="invoice-summary">
-                <div>
-                  <span>{labels.subtotal}</span>
-                  <strong>{formatMoney(subtotal)}</strong>
-                </div>
-                {discount > 0 && (
-                  <div>
-                    <span>
-                      {labels.discount} ({discount}%)
-                    </span>
-                    <strong>-{formatMoney(discountAmount)}</strong>
-                  </div>
-                )}
-                {tax > 0 && (
-                  <div>
-                    <span>
-                      {labels.tax} ({tax}%)
-                    </span>
-                    <strong>{formatMoney(taxAmount)}</strong>
-                  </div>
-                )}
-                <div className="invoice-total">
-                  <span>{labels.total}</span>
-                  <strong>{formatMoney(total)}</strong>
-                </div>
-              </div>
-              <div className="invoice-note">
-                <strong>{labels.notes}</strong>
-                <p>{note}</p>
-              </div>
-              <small className="invoice-made">Generated with Invoicr</small>
-            </div>
-          </div>
-          <div className="export-row">
-            <button className="primary-button" onClick={exportPdf}>
-              Download PDF
-            </button>
-            <button
-              className="square-button"
-              onClick={() => exportImage("png")}
-            >
-              PNG
-            </button>
-            <button
-              className="square-button"
-              onClick={() => exportImage("jpg")}
-            >
-              JPG
-            </button>
-          </div>
-        </aside>
+        <InvoicePreview
+          invoice={invoice}
+          amounts={amounts}
+          invoiceRef={invoiceRef}
+          formatMoney={formatMoney}
+          onExportPdf={exportPdf}
+          onExportImage={exportImage}
+        />
       </section>
 
       <section className="value-strip">
