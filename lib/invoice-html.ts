@@ -5,7 +5,7 @@ import {
   type InvoicePayload,
 } from "./invoice";
 
-function escapeHtml(value: unknown): string {
+/** Escapes untrusted invoice values before inserting them into HTML markup. */\nfunction escapeHtml(value: unknown): string {
   return String(value ?? "").replace(
     /[&<>"']/g,
     (character) =>
