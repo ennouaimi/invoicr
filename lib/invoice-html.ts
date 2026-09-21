@@ -80,7 +80,7 @@ export function renderInvoiceHtml(invoice: InvoicePayload): string {
       <span>${labels.date}</span>
       <b>${escapeHtml(invoice.date ?? new Date().toISOString().slice(0, 10))}</b>
       <span>${labels.payment}</span>
-      <b>${escapeHtml(invoice.payment?.method ?? "—")}${invoice.payment?.last4 ? ` •••• ${escapeHtml(invoice.payment.last4)}` : ""}</b>
+      <b>${escapeHtml(invoice.payment?.method ? (labels.paymentMethods[invoice.payment.method] ?? invoice.payment.method) : "—")}${invoice.payment?.last4 ? ` •••• ${escapeHtml(invoice.payment.last4)}` : ""}</b>
     </div>
     <div class="dash"></div>
     <section class="items">
@@ -99,7 +99,7 @@ export function renderInvoiceHtml(invoice: InvoicePayload): string {
       <span class="total">${labels.total}</span>
       <b class="total">${money(result.total, currency)}</b>
     </section>
-    <div class="foot">${escapeHtml(invoice.note ?? "Thank you for your business!")}</div>
+    <div class="foot">${escapeHtml(invoice.note ?? labels.defaultNote)}</div>
   </main>
 </body>
 </html>`;
