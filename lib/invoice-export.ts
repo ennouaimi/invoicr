@@ -43,10 +43,7 @@ export async function exportInvoiceImage(
  * Captures the invoice preview and fits it onto a single A4 PDF page.
  * The preview is rendered at a high pixel ratio to keep exported text sharp.
  */
-export async function exportInvoicePdf(
-  element: HTMLElement,
-  invoiceNumber: string,
-): Promise<void> {
+export async function exportInvoicePdf(element: HTMLElement, invoiceNumber: string): Promise<void> {
   const dataUrl = await toPng(element, CAPTURE_OPTIONS);
   const image = new Image();
   image.src = dataUrl;
@@ -62,13 +59,6 @@ export async function exportInvoicePdf(
     format: "a4",
   });
 
-  pdf.addImage(
-    dataUrl,
-    "PNG",
-    10,
-    10,
-    pageWidth,
-    Math.min(imageHeight, pageHeight),
-  );
+  pdf.addImage(dataUrl, "PNG", 10, 10, pageWidth, Math.min(imageHeight, pageHeight));
   pdf.save(`invoice-${invoiceNumber}.pdf`);
 }

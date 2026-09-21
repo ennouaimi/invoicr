@@ -145,10 +145,7 @@ export function money(amount: number, currency = "EUR"): string {
  * Negative discounts/taxes are intentionally clamped by the caller validation.
  */
 export function totals(invoice: InvoicePayload): InvoiceTotals {
-  const subtotal = invoice.items.reduce(
-    (sum, item) => sum + item.quantity * item.unitPrice,
-    0,
-  );
+  const subtotal = invoice.items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0);
   const discount = subtotal * ((invoice.discount?.rate ?? 0) / 100);
   const taxable = Math.max(0, subtotal - discount);
   const tax = taxable * ((invoice.tax?.rate ?? 0) / 100);
@@ -181,11 +178,7 @@ export function validateInvoice(value: unknown): string | null {
   }
 
   for (const item of invoice.items) {
-    if (
-      !item.name ||
-      typeof item.quantity !== "number" ||
-      typeof item.unitPrice !== "number"
-    ) {
+    if (!item.name || typeof item.quantity !== "number" || typeof item.unitPrice !== "number") {
       return "Each item requires name, numeric quantity and numeric unitPrice.";
     }
   }

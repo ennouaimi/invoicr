@@ -1,11 +1,6 @@
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 
-import {
-  getInvoiceLabels,
-  money,
-  totals,
-  type InvoicePayload,
-} from "./invoice";
+import { getInvoiceLabels, money, totals, type InvoicePayload } from "./invoice";
 
 const PAGE_SIZE: [number, number] = [226.77, 520];
 const LEFT_MARGIN = 18;
@@ -23,9 +18,7 @@ function toPdfText(value: string): string {
 }
 
 /** Renders an invoice payload to PDF bytes for the public API response. */
-export async function renderInvoicePdf(
-  invoice: InvoicePayload,
-): Promise<Uint8Array> {
+export async function renderInvoicePdf(invoice: InvoicePayload): Promise<Uint8Array> {
   const labels = getInvoiceLabels(invoice.language);
   const currency = invoice.currency ?? "EUR";
   const result = totals(invoice);
@@ -36,12 +29,7 @@ export async function renderInvoicePdf(
   const boldFont = await document.embedFont(StandardFonts.HelveticaBold);
   let y = START_Y;
 
-  const drawText = (
-    value: string,
-    x = LEFT_MARGIN,
-    size = 9,
-    bold = false,
-  ): void => {
+  const drawText = (value: string, x = LEFT_MARGIN, size = 9, bold = false): void => {
     page.drawText(toPdfText(value), {
       x,
       y,
@@ -62,19 +50,13 @@ export async function renderInvoicePdf(
   y -= 6;
   drawText(labels.invoice, LEFT_MARGIN, 12, true);
   drawText(`${labels.invoiceNumber}: ${invoice.invoiceNumber ?? "RECEIPT"}`);
-  drawText(
-    `${labels.date}: ${invoice.date ?? new Date().toISOString().slice(0, 10)}`,
-  );
+  drawText(`${labels.date}: ${invoice.date ?? new Date().toISOString().slice(0, 10)}`);
 
   const paymentMethod = invoice.payment?.method
     ? (labels.paymentMethods[invoice.payment.method] ?? invoice.payment.method)
     : "-";
-  const paymentSuffix = invoice.payment?.last4
-    ? ` ****${invoice.payment.last4}`
-    : "";
-  drawText(
-    `${labels.payment}: ${paymentMethod}${paymentSuffix}`,
-  );
+  const paymentSuffix = invoice.payment?.last4 ? ` ****${invoice.payment.last4}` : "";
+  drawText(`${labels.payment}: ${paymentMethod}${paymentSuffix}`);
 
   y -= 8;
   for (const item of invoice.items) {
@@ -88,12 +70,7 @@ export async function renderInvoicePdf(
   }
 
   y -= 5;
-  drawText(
-    `${labels.subtotal}: ${money(result.subtotal, currency)}`,
-    LEFT_MARGIN,
-    9,
-    true,
-  );
+  drawText(`${labels.subtotal}: ${money(result.subtotal, currency)}`, LEFT_MARGIN, 9, true);
 
   if (result.discount) {
     drawText(`${labels.discount}: -${money(result.discount, currency)}`);
@@ -103,12 +80,7 @@ export async function renderInvoicePdf(
   }
 
   y -= 4;
-  drawText(
-    `${labels.total}: ${money(result.total, currency)}`,
-    LEFT_MARGIN,
-    14,
-    true,
-  );
+  drawText(`${labels.total}: ${money(result.total, currency)}`, LEFT_MARGIN, 14, true);
   y -= 12;
   drawText(invoice.note ?? labels.defaultNote, LEFT_MARGIN, 8);
 

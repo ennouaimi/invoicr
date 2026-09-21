@@ -88,8 +88,8 @@ export default function Docs() {
           with one request.
         </h1>
         <p>
-          A stateless invoice API. Send transaction data and get a PDF, HTML
-          invoice or calculated JSON back. No database required.
+          A stateless invoice API. Send transaction data and get a PDF, HTML invoice or calculated
+          JSON back. No database required.
         </p>
       </header>
       <div className="docs-grid">
@@ -106,17 +106,16 @@ export default function Docs() {
             <code>/api/v1/invoices</code>
             <h2>Create an invoice</h2>
             <p>
-              Invoicr validates your transaction, calculates totals and renders
-              the result immediately.
+              Invoicr validates your transaction, calculates totals and renders the result
+              immediately.
             </p>
           </section>
           <section id="payload">
             <h2>Request body</h2>
             <CodeBlock code={payload} label="JSON" />
             <p>
-              Set <code>language</code> to <code>en</code> (default) or{" "}
-              <code>fr</code> to translate invoice labels. Unsupported values
-              fall back to English.
+              Set <code>language</code> to <code>en</code> (default) or <code>fr</code> to translate
+              invoice labels. Unsupported values fall back to English.
             </p>
           </section>
           <section id="formats">

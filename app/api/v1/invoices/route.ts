@@ -1,8 +1,4 @@
-import {
-  totals,
-  validateInvoice,
-  type InvoicePayload,
-} from "../../../../lib/invoice";
+import { totals, validateInvoice, type InvoicePayload } from "../../../../lib/invoice";
 import { renderInvoiceHtml } from "../../../../lib/invoice-html";
 import { renderInvoicePdf } from "../../../../lib/invoice-pdf";
 
@@ -18,18 +14,13 @@ type ResponseFormat = "pdf" | "html" | "json";
 
 /** Builds API errors with the same CORS headers as successful responses. */
 function jsonError(message: string, status: number): Response {
-  return Response.json(
-    { error: message },
-    { status, headers: CORS_HEADERS },
-  );
+  return Response.json({ error: message }, { status, headers: CORS_HEADERS });
 }
 
 /** Reads and validates the requested output format. PDF is the default. */
 function parseResponseFormat(request: Request): ResponseFormat | null {
   const format = new URL(request.url).searchParams.get("format") ?? "pdf";
-  return format === "pdf" || format === "html" || format === "json"
-    ? format
-    : null;
+  return format === "pdf" || format === "html" || format === "json" ? format : null;
 }
 
 /** Sanitizes user-provided invoice numbers before using them in a header. */
@@ -81,10 +72,7 @@ export async function POST(request: Request): Promise<Response> {
   }
 
   if (format === "json") {
-    return Response.json(
-      { invoice, totals: totals(invoice) },
-      { headers: CORS_HEADERS },
-    );
+    return Response.json({ invoice, totals: totals(invoice) }, { headers: CORS_HEADERS });
   }
 
   const pdf = await renderInvoicePdf(invoice);

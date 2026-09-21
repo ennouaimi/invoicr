@@ -8,12 +8,7 @@ type InvoiceItemsEditorProps = {
 };
 
 /** Editable invoice line items. Item mutation stays owned by the parent editor. */
-export function InvoiceItemsEditor({
-  items,
-  onAdd,
-  onUpdate,
-  onRemove,
-}: InvoiceItemsEditorProps) {
+export function InvoiceItemsEditor({ items, onAdd, onUpdate, onRemove }: InvoiceItemsEditorProps) {
   return (
     <>
       <div className="section-heading compact">
@@ -29,15 +24,11 @@ export function InvoiceItemsEditor({
       <div className="items-editor">
         {items.map((item, index) => (
           <div className="item-row" key={item.id}>
-            <div className="item-index">
-              {String(index + 1).padStart(2, "0")}
-            </div>
+            <div className="item-index">{String(index + 1).padStart(2, "0")}</div>
             <input
               className="item-name"
               value={item.description}
-              onChange={(event) =>
-                onUpdate(item.id, { description: event.target.value })
-              }
+              onChange={(event) => onUpdate(item.id, { description: event.target.value })}
             />
             <input
               type="number"
@@ -54,9 +45,7 @@ export function InvoiceItemsEditor({
               min="0"
               step="0.01"
               value={item.price}
-              onChange={(event) =>
-                onUpdate(item.id, { price: Number(event.target.value) || 0 })
-              }
+              onChange={(event) => onUpdate(item.id, { price: Number(event.target.value) || 0 })}
             />
             <button
               className="remove-button"

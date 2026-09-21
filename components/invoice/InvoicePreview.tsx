@@ -30,10 +30,7 @@ export function InvoicePreview({
 
   // Known payment methods are stored as stable values and translated only at render time.
   const paymentMethod = labels.paymentMethods[invoice.payment] ?? invoice.payment;
-  const note =
-    invoice.note === "Thank you for your business."
-      ? labels.defaultNote
-      : invoice.note;
+  const note = invoice.note === "Thank you for your business." ? labels.defaultNote : invoice.note;
 
   return (
     <aside className="preview-column">
@@ -50,15 +47,9 @@ export function InvoicePreview({
           <div className="invoice-head">
             <div>
               {invoice.logo ? (
-                <img
-                  className="invoice-logo"
-                  src={invoice.logo}
-                  alt="Business logo"
-                />
+                <img className="invoice-logo" src={invoice.logo} alt="Business logo" />
               ) : (
-                <div className="invoice-logo-fallback">
-                  {invoice.business.slice(0, 1) || "I"}
-                </div>
+                <div className="invoice-logo-fallback">{invoice.business.slice(0, 1) || "I"}</div>
               )}
               <h3>{invoice.business || "Your business"}</h3>
               <p>{invoice.address}</p>

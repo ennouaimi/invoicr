@@ -4,15 +4,8 @@ import { useMemo, useRef, useState } from "react";
 
 import { InvoiceEditor } from "../components/invoice/InvoiceEditor";
 import { InvoicePreview } from "../components/invoice/InvoicePreview";
-import type {
-  EditorItem,
-  InvoiceEditorValue,
-} from "../components/invoice/types";
-import {
-  exportInvoiceImage,
-  exportInvoicePdf,
-  type ImageFormat,
-} from "../lib/invoice-export";
+import type { EditorItem, InvoiceEditorValue } from "../components/invoice/types";
+import { exportInvoiceImage, exportInvoicePdf, type ImageFormat } from "../lib/invoice-export";
 
 const CURRENCY_SYMBOLS: Record<string, string> = {
   EUR: "€",
@@ -52,16 +45,11 @@ function createInitialInvoice(): InvoiceEditorValue {
 }
 
 export default function Home() {
-  const [invoice, setInvoice] = useState<InvoiceEditorValue>(
-    createInitialInvoice,
-  );
+  const [invoice, setInvoice] = useState<InvoiceEditorValue>(createInitialInvoice);
   const invoiceRef = useRef<HTMLDivElement>(null);
 
   const amounts = useMemo(() => {
-    const subtotal = invoice.items.reduce(
-      (sum, item) => sum + item.quantity * item.price,
-      0,
-    );
+    const subtotal = invoice.items.reduce((sum, item) => sum + item.quantity * item.price, 0);
     const discount = subtotal * (Math.max(0, invoice.discount) / 100);
     const taxable = Math.max(0, subtotal - discount);
     const tax = taxable * (Math.max(0, invoice.tax) / 100);
@@ -74,19 +62,14 @@ export default function Home() {
     };
   }, [invoice.items, invoice.discount, invoice.tax]);
 
-  function updateField<K extends keyof InvoiceEditorValue>(
-    field: K,
-    value: InvoiceEditorValue[K],
-  ) {
+  function updateField<K extends keyof InvoiceEditorValue>(field: K, value: InvoiceEditorValue[K]) {
     setInvoice((current) => ({ ...current, [field]: value }));
   }
 
   function updateItem(id: number, patch: Partial<EditorItem>) {
     setInvoice((current) => ({
       ...current,
-      items: current.items.map((item) =>
-        item.id === id ? { ...item, ...patch } : item,
-      ),
+      items: current.items.map((item) => (item.id === id ? { ...item, ...patch } : item)),
     }));
   }
 
@@ -109,9 +92,7 @@ export default function Home() {
     setInvoice((current) => ({
       ...current,
       items:
-        current.items.length === 1
-          ? current.items
-          : current.items.filter((item) => item.id !== id),
+        current.items.length === 1 ? current.items : current.items.filter((item) => item.id !== id),
     }));
   }
 
@@ -165,9 +146,8 @@ export default function Home() {
           <span>In under a minute.</span>
         </h1>
         <p>
-          Create professional invoices directly in your browser, or generate
-          them programmatically with the Invoicr API. No account, no watermark,
-          no invoice data stored.
+          Create professional invoices directly in your browser, or generate them programmatically
+          with the Invoicr API. No account, no watermark, no invoice data stored.
         </p>
         <div className="hero-actions">
           <a className="hero-primary" href="#maker">
@@ -227,11 +207,7 @@ export default function Home() {
           <span>Invoicr</span>
         </div>
         <p>Simple tools for small businesses.</p>
-        <a
-          href="https://github.com/ennouaimi/invoicr"
-          target="_blank"
-          rel="noreferrer"
-        >
+        <a href="https://github.com/ennouaimi/invoicr" target="_blank" rel="noreferrer">
           ⭐ Star Invoicr on GitHub
         </a>
       </footer>

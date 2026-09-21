@@ -8,10 +8,7 @@ const CURRENCIES = ["EUR", "USD", "GBP", "MAD"];
 
 type InvoiceEditorProps = {
   value: InvoiceEditorValue;
-  onChange: <K extends keyof InvoiceEditorValue>(
-    field: K,
-    value: InvoiceEditorValue[K],
-  ) => void;
+  onChange: <K extends keyof InvoiceEditorValue>(field: K, value: InvoiceEditorValue[K]) => void;
   onAddItem: () => void;
   onUpdateItem: (id: number, patch: Partial<EditorItem>) => void;
   onRemoveItem: (id: number) => void;
@@ -117,9 +114,7 @@ export function InvoiceEditor({
           Invoice language
           <select
             value={value.language}
-            onChange={(event) =>
-              onChange("language", event.target.value as InvoiceLanguage)
-            }
+            onChange={(event) => onChange("language", event.target.value as InvoiceLanguage)}
           >
             <option value="en">English</option>
             <option value="fr">Français</option>
@@ -127,12 +122,7 @@ export function InvoiceEditor({
         </label>
         <label>
           Logo
-          <input
-            className="file-input"
-            type="file"
-            accept="image/*"
-            onChange={uploadLogo}
-          />
+          <input className="file-input" type="file" accept="image/*" onChange={uploadLogo} />
         </label>
       </div>
 
@@ -188,9 +178,7 @@ export function InvoiceEditor({
             type="number"
             min="0"
             value={value.tax}
-            onChange={(event) =>
-              onChange("tax", Number(event.target.value) || 0)
-            }
+            onChange={(event) => onChange("tax", Number(event.target.value) || 0)}
           />
         </label>
         <label>
@@ -200,17 +188,12 @@ export function InvoiceEditor({
             min="0"
             max="100"
             value={value.discount}
-            onChange={(event) =>
-              onChange("discount", Number(event.target.value) || 0)
-            }
+            onChange={(event) => onChange("discount", Number(event.target.value) || 0)}
           />
         </label>
         <label className="span-2">
           Footer note
-          <input
-            value={value.note}
-            onChange={(event) => onChange("note", event.target.value)}
-          />
+          <input value={value.note} onChange={(event) => onChange("note", event.target.value)} />
         </label>
       </div>
     </div>

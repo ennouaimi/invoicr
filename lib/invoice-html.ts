@@ -1,9 +1,4 @@
-import {
-  getInvoiceLabels,
-  money,
-  totals,
-  type InvoicePayload,
-} from "./invoice";
+import { getInvoiceLabels, money, totals, type InvoicePayload } from "./invoice";
 
 /** Escapes untrusted invoice values before inserting them into HTML markup. */
 function escapeHtml(value: unknown): string {
