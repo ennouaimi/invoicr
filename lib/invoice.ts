@@ -76,7 +76,12 @@ export function getInvoiceLabels(language?: string): InvoiceLabels {
   return language === "fr" ? invoiceLabels.fr : invoiceLabels.en;
 }
 
-const symbols: Record<string, string> = {\n  EUR: "€",\n  USD: "$",\n  GBP: "£",\n  MAD: "MAD ",\n};
+const symbols: Record<string, string> = {
+  EUR: "€",
+  USD: "$",
+  GBP: "£",
+  MAD: "MAD ",
+};
 
 export function money(amount: number, currency = "EUR") {
   const symbol = symbols[currency] ?? `${currency} `;
@@ -84,7 +89,10 @@ export function money(amount: number, currency = "EUR") {
 }
 
 export function totals(invoice: InvoicePayload) {
-  const subtotal = invoice.items.reduce(\n    (sum, item) => sum + item.quantity * item.unitPrice,\n    0,\n  );
+  const subtotal = invoice.items.reduce(
+    (sum, item) => sum + item.quantity * item.unitPrice,
+    0,
+  );
   const discount = subtotal * ((invoice.discount?.rate ?? 0) / 100);
   const taxable = Math.max(0, subtotal - discount);
   const tax = taxable * ((invoice.tax?.rate ?? 0) / 100);
@@ -101,7 +109,11 @@ export function validateInvoice(value: unknown): string | null {
   }
 
   for (const item of invoice.items) {
-    if (\n      !item.name ||\n      typeof item.quantity !== "number" ||\n      typeof item.unitPrice !== "number"\n    ) {
+    if (
+      !item.name ||
+      typeof item.quantity !== "number" ||
+      typeof item.unitPrice !== "number"
+    ) {
       return "Each item requires name, numeric quantity and numeric unitPrice.";
     }
   }
@@ -110,13 +122,17 @@ export function validateInvoice(value: unknown): string | null {
 }
 
 function escapeHtml(value: unknown) {
-  return String(value ?? "").replace(/[&<>"']/g, (character) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#39;",
-  })[character]!);
+  return String(value ?? "").replace(
+    /[&<>"']/g,
+    (character) =>
+      ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+      })[character]!,
+  );
 }
 
 export function invoiceHtml(invoice: InvoicePayload) {
@@ -124,12 +140,16 @@ export function invoiceHtml(invoice: InvoicePayload) {
   const language = invoice.language === "fr" ? "fr" : "en";
   const labels = getInvoiceLabels(language);
   const result = totals(invoice);
-  const rows = invoice.items.map((item) => `
+  const rows = invoice.items
+    .map(
+      (item) => `
     <div class="item">
       <div><b>${escapeHtml(item.name)}</b><small>${labels.quantity}: ${item.quantity} · ${labels.rate}: ${money(item.unitPrice, currency)}</small></div>
       <b>${money(item.quantity * item.unitPrice, currency)}</b>
     </div>
-  `).join("");
+  `,
+    )
+    .join("");
 
   return `<!doctype html>
 <html lang="${language}">

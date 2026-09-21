@@ -18,7 +18,10 @@ const cors = {
 };
 
 function pdfText(value: string) {
-  return value\n    .normalize("NFD")\n    .replace(/[\\u0300-\\u036f]/g, "")\n    .replace(/[^ -~]/g, "");
+  return value
+    .normalize("NFD")
+    .replace(/[\\u0300-\\u036f]/g, "")
+    .replace(/[^ -~]/g, "");
 }
 
 export async function OPTIONS() {
@@ -30,7 +33,10 @@ export async function POST(request: Request) {
   try {
     body = await request.json();
   } catch {
-    return Response.json(\n      { error: "Invalid JSON body." },\n      { status: 400, headers: cors },\n    );
+    return Response.json(
+      { error: "Invalid JSON body." },
+      { status: 400, headers: cors },
+    );
   }
 
   const error = validateInvoice(body);
@@ -42,9 +48,17 @@ export async function POST(request: Request) {
       headers: { ...cors, "Content-Type": "text/html; charset=utf-8" },
     });
   }
-  if (format === "json") {\n    return Response.json(\n      { invoice: body, totals: totals(body) },\n      { headers: cors },\n    );\n  }
+  if (format === "json") {
+    return Response.json(
+      { invoice: body, totals: totals(body) },
+      { headers: cors },
+    );
+  }
   if (format !== "pdf") {
-    return Response.json(\n      { error: "format must be pdf, html or json." },\n      { status: 400, headers: cors },\n    );
+    return Response.json(
+      { error: "format must be pdf, html or json." },
+      { status: 400, headers: cors },
+    );
   }
 
   const labels = getInvoiceLabels(body.language);
@@ -69,13 +83,17 @@ export async function POST(request: Request) {
 
   text(body.merchant.name, 18, 15, true);
   if (body.merchant.address) {
-    for (const line of body.merchant.address.split("\n")) text(line, 18, 8);
+    for (const line of body.merchant.address.split("\n")) {
+      text(line, 18, 8);
+    }
   }
   y -= 6;
   text(labels.invoice, 18, 12, true);
   text(`${labels.invoiceNumber}: ${body.invoiceNumber ?? "RECEIPT"}`);
   text(`${labels.date}: ${body.date ?? new Date().toISOString().slice(0, 10)}`);
-  text(`${labels.payment}: ${body.payment?.method ?? "-"}${body.payment?.last4 ? ` ****${body.payment.last4}` : ""}`);
+  text(
+    `${labels.payment}: ${body.payment?.method ?? "-"}${body.payment?.last4 ? ` ****${body.payment.last4}` : ""}`,
+  );
   y -= 8;
 
   for (const item of body.items) {
@@ -90,7 +108,8 @@ export async function POST(request: Request) {
 
   y -= 5;
   text(`${labels.subtotal}: ${money(result.subtotal, currency)}`, 18, 9, true);
-  if (result.discount) text(`${labels.discount}: -${money(result.discount, currency)}`);
+  if (result.discount)
+    text(`${labels.discount}: -${money(result.discount, currency)}`);
   if (result.tax) text(`${labels.tax}: ${money(result.tax, currency)}`);
   y -= 4;
   text(`${labels.total}: ${money(result.total, currency)}`, 18, 14, true);
@@ -98,7 +117,10 @@ export async function POST(request: Request) {
   text(body.note ?? "Thank you for your purchase!", 18, 8);
 
   const bytes = await pdf.save();
-  const filename = (body.invoiceNumber ?? "invoice").replace(/[^a-z0-9_-]/gi, "-");
+  const filename = (body.invoiceNumber ?? "invoice").replace(
+    /[^a-z0-9_-]/gi,
+    "-",
+  );
   return new Response(bytes as BodyInit, {
     headers: {
       ...cors,
