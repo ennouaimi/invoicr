@@ -15,14 +15,14 @@ type Item = {
   price: number;
 };
 
-const currencies = [
+// Currencies supported by the browser-based invoice editor.\nconst currencies = [
   ["EUR", "€"],
   ["USD", "$"],
   ["GBP", "£"],
   ["MAD", "MAD"],
 ];
 
-export default function Home() {
+/**\n * Interactive invoice editor.\n *\n * State stays local to the browser: editing an invoice does not persist or\n * send its contents to the API. Export concerns live in lib/invoice-export.\n */\nexport default function Home() {
   const [business, setBusiness] = useState("Northstar Studio");
   const [address, setAddress] = useState(
     "120 Market Street\
@@ -66,7 +66,7 @@ San Francisco, CA 94105",
   const taxAmount = taxable * (Math.max(0, tax) / 100);
   const total = taxable + taxAmount;
 
-  function updateItem(id: number, patch: Partial<Item>) {
+  // Item mutations are kept together so the JSX remains focused on rendering.\n  function updateItem(id: number, patch: Partial<Item>) {
     setItems((current) =>
       current.map((item) => (item.id === id ? { ...item, ...patch } : item)),
     );
@@ -85,7 +85,7 @@ San Francisco, CA 94105",
     );
   }
 
-  function uploadLogo(event: ChangeEvent<HTMLInputElement>) {
+  // Logos are kept as data URLs so invoice data never needs server-side storage.\n  function uploadLogo(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
@@ -93,7 +93,7 @@ San Francisco, CA 94105",
     reader.readAsDataURL(file);
   }
 
-  async function exportImage(format: ImageFormat) {
+  // Export helpers receive the rendered preview instead of duplicating capture logic.\n  async function exportImage(format: ImageFormat) {
     if (!invoiceRef.current) return;
     await exportInvoiceImage(invoiceRef.current, invoiceNo, format);
   }
