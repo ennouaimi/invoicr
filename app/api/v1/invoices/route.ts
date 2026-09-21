@@ -1,131 +1,94 @@
-import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
-
 import {
-  getInvoiceLabels,
-  money,
   totals,
   validateInvoice,
   type InvoicePayload,
 } from "../../../../lib/invoice";
 import { renderInvoiceHtml } from "../../../../lib/invoice-html";
+import { renderInvoicePdf } from "../../../../lib/invoice-pdf";
 
 export const runtime = "nodejs";
 
-const cors = {
+const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "POST,OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type",
 };
 
-function pdfText(value: string) {
-  return value
-    .normalize("NFD")
-    .replace(/[\\u0300-\\u036f]/g, "")
-    .replace(/[^ -~]/g, "");
+type ResponseFormat = "pdf" | "html" | "json";
+
+function jsonError(message: string, status: number): Response {
+  return Response.json(
+    { error: message },
+    { status, headers: CORS_HEADERS },
+  );
 }
 
-export async function OPTIONS() {
-  return new Response(null, { status: 204, headers: cors });
+function parseResponseFormat(request: Request): ResponseFormat | null {
+  const format = new URL(request.url).searchParams.get("format") ?? "pdf";
+  return format === "pdf" || format === "html" || format === "json"
+    ? format
+    : null;
 }
 
-export async function POST(request: Request) {
-  let body: InvoicePayload;
+function invoiceFilename(invoiceNumber?: string): string {
+  const safeName = (invoiceNumber ?? "invoice").replace(/[^a-z0-9_-]/gi, "-");
+  return `${safeName}.pdf`;
+}
+
+export async function OPTIONS(): Promise<Response> {
+  return new Response(null, {
+    status: 204,
+    headers: CORS_HEADERS,
+  });
+}
+
+/**
+ * Creates an invoice in PDF, HTML or JSON form.
+ *
+ * The endpoint is intentionally stateless: payloads are validated, rendered
+ * and returned without persisting invoice data.
+ */
+export async function POST(request: Request): Promise<Response> {
+  let invoice: InvoicePayload;
+
   try {
-    body = await request.json();
+    invoice = await request.json();
   } catch {
-    return Response.json(
-      { error: "Invalid JSON body." },
-      { status: 400, headers: cors },
-    );
+    return jsonError("Invalid JSON body.", 400);
   }
 
-  const error = validateInvoice(body);
-  if (error) return Response.json({ error }, { status: 422, headers: cors });
+  const validationError = validateInvoice(invoice);
+  if (validationError) {
+    return jsonError(validationError, 422);
+  }
 
-  const format = new URL(request.url).searchParams.get("format") ?? "pdf";
+  const format = parseResponseFormat(request);
+  if (!format) {
+    return jsonError("format must be pdf, html or json.", 400);
+  }
+
   if (format === "html") {
-    return new Response(renderInvoiceHtml(body), {
-      headers: { ...cors, "Content-Type": "text/html; charset=utf-8" },
+    return new Response(renderInvoiceHtml(invoice), {
+      headers: {
+        ...CORS_HEADERS,
+        "Content-Type": "text/html; charset=utf-8",
+      },
     });
   }
+
   if (format === "json") {
     return Response.json(
-      { invoice: body, totals: totals(body) },
-      { headers: cors },
-    );
-  }
-  if (format !== "pdf") {
-    return Response.json(
-      { error: "format must be pdf, html or json." },
-      { status: 400, headers: cors },
+      { invoice, totals: totals(invoice) },
+      { headers: CORS_HEADERS },
     );
   }
 
-  const labels = getInvoiceLabels(body.language);
-  const currency = body.currency ?? "EUR";
-  const result = totals(body);
-  const pdf = await PDFDocument.create();
-  const page = pdf.addPage([226.77, 520]);
-  const font = await pdf.embedFont(StandardFonts.Helvetica);
-  const bold = await pdf.embedFont(StandardFonts.HelveticaBold);
-  let y = 485;
-
-  const text = (value: string, x = 18, size = 9, isBold = false) => {
-    page.drawText(pdfText(value), {
-      x,
-      y,
-      size,
-      font: isBold ? bold : font,
-      color: rgb(0.12, 0.11, 0.1),
-    });
-    y -= size + 7;
-  };
-
-  text(body.merchant.name, 18, 15, true);
-  if (body.merchant.address) {
-    for (const line of body.merchant.address.split("\n")) {
-      text(line, 18, 8);
-    }
-  }
-  y -= 6;
-  text(labels.invoice, 18, 12, true);
-  text(`${labels.invoiceNumber}: ${body.invoiceNumber ?? "RECEIPT"}`);
-  text(`${labels.date}: ${body.date ?? new Date().toISOString().slice(0, 10)}`);
-  text(
-    `${labels.payment}: ${body.payment?.method ?? "-"}${body.payment?.last4 ? ` ****${body.payment.last4}` : ""}`,
-  );
-  y -= 8;
-
-  for (const item of body.items) {
-    text(item.name, 18, 9, true);
-    text(
-      `${labels.quantity}: ${item.quantity}  ${labels.rate}: ${money(item.unitPrice, currency)}  ${labels.amount}: ${money(item.quantity * item.unitPrice, currency)}`,
-      18,
-      8,
-    );
-    y -= 3;
-  }
-
-  y -= 5;
-  text(`${labels.subtotal}: ${money(result.subtotal, currency)}`, 18, 9, true);
-  if (result.discount)
-    text(`${labels.discount}: -${money(result.discount, currency)}`);
-  if (result.tax) text(`${labels.tax}: ${money(result.tax, currency)}`);
-  y -= 4;
-  text(`${labels.total}: ${money(result.total, currency)}`, 18, 14, true);
-  y -= 12;
-  text(body.note ?? "Thank you for your purchase!", 18, 8);
-
-  const bytes = await pdf.save();
-  const filename = (body.invoiceNumber ?? "invoice").replace(
-    /[^a-z0-9_-]/gi,
-    "-",
-  );
-  return new Response(bytes as BodyInit, {
+  const pdf = await renderInvoicePdf(invoice);
+  return new Response(pdf as BodyInit, {
     headers: {
-      ...cors,
+      ...CORS_HEADERS,
       "Content-Type": "application/pdf",
-      "Content-Disposition": `attachment; filename="${filename}.pdf"`,
+      "Content-Disposition": `attachment; filename="${invoiceFilename(invoice.invoiceNumber)}"`,
       "Cache-Control": "no-store",
     },
   });
